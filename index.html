@@ -1,0 +1,3618 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NAPLÓ — Az én napom</title>
+<meta name="description" content="Napi tervező és tanulássegítő 12 éveseknek">
+<meta name="theme-color" content="#7C6FF7">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NAPLÓ">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0D0D12;
+  --bg2: #13131A;
+  --bg3: #1A1A24;
+  --border: #2A2A38;
+  --border2: #3A3A50;
+  --text: #F0EEF8;
+  --text2: #9B98B8;
+  --text3: #5A5878;
+  --accent: #7C6FF7;
+  --accent2: #A89BFF;
+  --green: #2ECC8E;
+  --green2: #1A8F63;
+  --orange: #FF8C42;
+  --pink: #FF6B9D;
+  --yellow: #FFD166;
+  --blue: #4FC3F7;
+  --red: #FF4D6D;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* BG GRID */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: 
+    linear-gradient(rgba(124,111,247,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,111,247,.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* NAV */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 20px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.nav::-webkit-scrollbar { display: none; }
+
+.nav-logo {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--accent2);
+  letter-spacing: .05em;
+  padding: 14px 16px 14px 0;
+  border-right: 1px solid var(--border);
+  margin-right: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nav-btn {
+  padding: 14px 14px 12px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text3);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.nav-btn:hover { color: var(--text2); }
+.nav-btn.active { color: var(--accent2); border-bottom-color: var(--accent); }
+
+/* PAGES */
+.page { display: none; padding: 24px 18px 100px; max-width: 900px; margin: 0 auto; position: relative; z-index: 1; }
+.page.active { display: block; }
+
+/* HEADERS */
+.page-header { margin-bottom: 28px; }
+.page-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(28px, 6vw, 48px);
+  line-height: 1;
+  background: linear-gradient(135deg, var(--text) 30%, var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 6px;
+}
+.page-sub { font-size: 13px; color: var(--text3); letter-spacing: .03em; }
+
+/* PILL BADGE */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.badge-accent { background: rgba(124,111,247,.15); color: var(--accent2); border: 1px solid rgba(124,111,247,.3); }
+.badge-green { background: rgba(46,204,142,.12); color: var(--green); border: 1px solid rgba(46,204,142,.25); }
+.badge-orange { background: rgba(255,140,66,.12); color: var(--orange); border: 1px solid rgba(255,140,66,.25); }
+
+/* CARD */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 12px;
+  transition: border-color .2s;
+}
+.card:hover { border-color: var(--border2); }
+.card-accent { border-color: rgba(124,111,247,.3); background: rgba(124,111,247,.05); }
+.card-green { border-color: rgba(46,204,142,.25); background: rgba(46,204,142,.04); }
+.card-orange { border-color: rgba(255,140,66,.25); background: rgba(255,140,66,.04); }
+
+.card-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+/* SECTION LABEL */
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin: 20px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* PROGRESS BAR */
+.prog-wrap { margin-bottom: 20px; }
+.prog-top { display: flex; justify-content: space-between; font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+.prog-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.prog-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green)); border-radius: 3px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+
+/* TIME BLOCKS */
+.time-grid { display: flex; flex-direction: column; gap: 5px; }
+.time-row { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: stretch; }
+.time-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text3);
+  padding-top: 12px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.time-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+  border-left: 3px solid transparent;
+}
+.time-block:hover { border-color: var(--border2); transform: translateX(2px); }
+.time-block.done { opacity: .35; }
+.time-block.done::after { content: '✓'; position: absolute; right: 12px; color: var(--green); font-weight: 700; font-size: 14px; }
+
+.tb-school { border-left-color: var(--accent); }
+.tb-break  { border-left-color: var(--green); }
+.tb-study  { border-left-color: var(--blue); }
+.tb-sport  { border-left-color: var(--orange); }
+.tb-free   { border-left-color: var(--pink); }
+.tb-sleep  { border-left-color: var(--text3); }
+
+.tb-icon { font-size: 16px; flex-shrink: 0; }
+.tb-body { flex: 1; min-width: 0; }
+.tb-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.tb-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.tb-dur {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text3);
+  background: var(--bg3);
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tb-edit {
+  opacity: 0;
+  background: none;
+  border: none;
+  color: var(--text3);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  transition: opacity .2s, color .15s;
+  flex-shrink: 0;
+}
+.time-block:hover .tb-edit { opacity: 1; }
+.tb-edit:hover { color: var(--accent2); }
+
+.add-block-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 14px;
+  background: none;
+  border: 1px dashed var(--border2);
+  border-radius: 10px;
+  color: var(--text3);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .2s;
+  margin-top: 6px;
+}
+.add-block-btn:hover { border-color: var(--accent); color: var(--accent2); }
+
+/* POMODORO */
+.pomo-wrap {
+  background: linear-gradient(135deg, rgba(124,111,247,.1), rgba(79,195,247,.05));
+  border: 1px solid rgba(124,111,247,.3);
+  border-radius: 20px;
+  padding: 28px 20px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+.pomo-subject {
+  font-size: 13px;
+  color: var(--text3);
+  margin-bottom: 16px;
+}
+.pomo-subject input {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 7px 13px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  outline: none;
+  width: 100%;
+  max-width: 280px;
+  margin-top: 6px;
+  transition: border-color .2s;
+}
+.pomo-subject input:focus { border-color: var(--accent); }
+.pomo-type-btns { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 18px; }
+.pomo-type {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text3);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+}
+.pomo-type.sel { background: var(--accent); border-color: var(--accent); color: white; }
+.pomo-display {
+  font-family: 'Syne', sans-serif;
+  font-size: 72px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  margin: 8px 0 16px;
+  letter-spacing: -3px;
+  transition: color .3s;
+}
+.pomo-display.work-color { color: var(--accent2); }
+.pomo-display.break-color { color: var(--green); }
+.pomo-display.urgent { color: var(--orange); animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.5} }
+.pomo-status { font-size: 13px; color: var(--text3); margin-bottom: 16px; min-height: 20px; }
+.pomo-done-msg { font-size: 16px; font-weight: 600; color: var(--green); display: none; margin-bottom: 8px; }
+.pomo-done-msg.show { display: block; }
+.pomo-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.pomo-sessions { display: flex; gap: 7px; justify-content: center; margin-top: 14px; }
+.session-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--border2);
+  transition: background .3s;
+}
+.session-dot.done { background: var(--green); }
+.session-dot.current { background: var(--accent); }
+
+/* SOUND BOARD */
+.sound-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+@media(max-width:480px){ .sound-grid { grid-template-columns: repeat(2,1fr); } }
+.sound-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 10px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.sound-btn:hover { border-color: var(--border2); transform: translateY(-2px); }
+.sound-btn.playing { border-color: var(--green); background: rgba(46,204,142,.08); }
+.sound-icon { font-size: 24px; }
+.sound-name { font-size: 12px; color: var(--text2); font-weight: 500; }
+.sound-state { font-size: 10px; color: var(--text3); }
+.sound-btn.playing .sound-state { color: var(--green); }
+.vol-row { display: flex; align-items: center; gap: 12px; padding: 12px 0; }
+.vol-label { font-size: 12px; color: var(--text3); white-space: nowrap; }
+.vol-slider {
+  flex: 1;
+  -webkit-appearance: none;
+  height: 4px;
+  background: var(--border2);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 8px rgba(124,111,247,.4);
+}
+
+/* ÓRAREND */
+.schedule-grid { display: grid; grid-template-columns: auto repeat(5, 1fr); gap: 1px; background: var(--border); border-radius: 14px; overflow: hidden; font-size: 12px; }
+.sched-head {
+  background: var(--bg3);
+  padding: 10px 8px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 11px;
+  color: var(--text3);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.sched-time {
+  background: var(--bg2);
+  padding: 8px 10px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text3);
+  text-align: right;
+  white-space: nowrap;
+}
+.sched-cell {
+  background: var(--bg2);
+  padding: 8px;
+  min-height: 44px;
+  cursor: pointer;
+  transition: background .15s;
+  position: relative;
+}
+.sched-cell:hover { background: var(--bg3); }
+.sched-cell.filled { background: rgba(124,111,247,.08); }
+.sched-cell-inner { font-size: 11px; font-weight: 500; color: var(--text); line-height: 1.4; }
+.sched-cell-sub { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* CHECKLIST */
+.check-list { display: flex; flex-direction: column; gap: 6px; }
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 14px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .15s;
+  user-select: none;
+  position: relative;
+}
+.check-item:hover { border-color: var(--border2); }
+.check-item.done { opacity: .4; }
+.check-box {
+  width: 20px; height: 20px;
+  border-radius: 6px;
+  border: 1.5px solid var(--border2);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: all .2s;
+}
+.check-item.done .check-box { background: var(--green); border-color: var(--green); color: white; }
+.check-text { flex: 1; font-size: 13px; color: var(--text); }
+.check-item.done .check-text { text-decoration: line-through; color: var(--text3); }
+.check-edit { opacity: 0; background: none; border: none; color: var(--text3); cursor: pointer; font-size: 13px; padding: 2px 4px; transition: opacity .2s; }
+.check-item:hover .check-edit { opacity: 1; }
+
+.add-check-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 14px;
+  background: none;
+  border: 1px dashed var(--border2);
+  border-radius: 10px;
+  color: var(--text3);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .2s;
+  margin-top: 5px;
+}
+.add-check-btn:hover { border-color: var(--green); color: var(--green); }
+
+/* MOOD */
+.mood-wrap {
+  background: linear-gradient(135deg, rgba(255,107,157,.06), rgba(255,209,102,.04));
+  border: 1px solid rgba(255,107,157,.2);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+.mood-emojis { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+.mood-emoji-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--bg3);
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all .2s;
+  font-family: 'Space Grotesk', sans-serif;
+}
+.mood-emoji-btn:hover { transform: scale(1.08); border-color: var(--border2); }
+.mood-emoji-btn.sel { border-color: var(--pink); background: rgba(255,107,157,.1); }
+.mood-emoji-btn span:first-child { font-size: 22px; }
+.mood-emoji-btn span:last-child { font-size: 10px; color: var(--text3); font-weight: 500; }
+.mood-tip-box {
+  margin-top: 12px;
+  padding: 12px 14px;
+  background: var(--bg3);
+  border-radius: 10px;
+  border-left: 3px solid var(--yellow);
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+  display: none;
+}
+.mood-tip-box.show { display: block; }
+
+/* ENERGY SLIDER */
+.energy-wrap { margin-bottom: 14px; }
+.energy-label-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text3); margin-bottom: 8px; }
+.energy-track { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; margin-bottom: 10px; }
+.energy-fill-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--green), var(--yellow)); border-radius: 4px; transition: width .4s; }
+.energy-slider {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 4px;
+  background: var(--border2);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.energy-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--orange);
+  cursor: pointer;
+  border: 3px solid var(--bg);
+  box-shadow: 0 0 10px rgba(255,140,66,.4);
+}
+
+/* MOTIVÁCIÓ */
+.motiv-card {
+  background: linear-gradient(135deg, rgba(124,111,247,.12), rgba(79,195,247,.08));
+  border: 1px solid rgba(124,111,247,.3);
+  border-radius: 16px;
+  padding: 22px;
+  text-align: center;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.motiv-card::before {
+  content: '"';
+  position: absolute;
+  top: -10px; left: 14px;
+  font-size: 80px;
+  color: rgba(124,111,247,.15);
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  line-height: 1;
+}
+.motiv-text {
+  font-family: 'Syne', sans-serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+}
+.motiv-sub { font-size: 12px; color: var(--text3); position: relative; z-index: 1; }
+.motiv-refresh-btn {
+  margin-top: 14px;
+  padding: 8px 18px;
+  background: rgba(124,111,247,.15);
+  border: 1px solid rgba(124,111,247,.3);
+  border-radius: 20px;
+  color: var(--accent2);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+  z-index: 1;
+}
+.motiv-refresh-btn:hover { background: rgba(124,111,247,.25); }
+
+/* TIPPEK */
+.tip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media(max-width:540px){ .tip-grid { grid-template-columns: 1fr; } }
+.tip-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  transition: border-color .2s;
+}
+.tip-card:hover { border-color: var(--border2); }
+.tip-emoji { font-size: 22px; margin-bottom: 8px; display: block; }
+.tip-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 5px; }
+.tip-text { font-size: 12px; color: var(--text3); line-height: 1.6; }
+.tip-highlight { color: var(--accent2); font-weight: 500; }
+
+/* XP / JUTALOM */
+.xp-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, rgba(255,209,102,.08), rgba(46,204,142,.05));
+  border: 1px solid rgba(255,209,102,.25);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.xp-icon { font-size: 32px; flex-shrink: 0; }
+.xp-body { flex: 1; }
+.xp-label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+.xp-val { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; color: var(--yellow); line-height: 1; }
+.xp-next { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.xp-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+.xp-fill { height: 100%; background: linear-gradient(90deg, var(--yellow), var(--orange)); border-radius: 3px; transition: width .5s; }
+
+/* STREAKS */
+.streak-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.streak-day {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text3);
+  flex-direction: column;
+  gap: 1px;
+}
+.streak-day.done { background: rgba(46,204,142,.12); border-color: var(--green2); color: var(--green); }
+.streak-day.today { border-color: var(--accent); color: var(--accent2); background: rgba(124,111,247,.1); }
+
+/* MODAL */
+.modal-ov {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  z-index: 500;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  backdrop-filter: blur(4px);
+}
+.modal-ov.open { display: flex; }
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  padding: 24px;
+  width: 100%;
+  max-width: 440px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.5);
+}
+.modal h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+.form-field { margin-bottom: 14px; }
+.form-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.form-field input, .form-field textarea, .form-field select {
+  width: 100%;
+  padding: 10px 13px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .2s;
+}
+.form-field input:focus, .form-field textarea:focus { border-color: var(--accent); }
+.form-field textarea { height: 70px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; }
+
+/* BUTTONS */
+.btn {
+  padding: 10px 20px;
+  border-radius: 50px;
+  border: none;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  letter-spacing: .02em;
+}
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover { background: #6A5FE8; transform: translateY(-1px); }
+.btn-secondary { background: var(--bg3); color: var(--text2); border: 1px solid var(--border2); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent2); }
+.btn-ghost { background: transparent; color: var(--text3); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+.btn-sm { padding: 7px 15px; font-size: 12px; }
+.btn-danger { background: rgba(255,77,109,.12); color: var(--red); border: 1px solid rgba(255,77,109,.25); }
+.btn-danger:hover { background: rgba(255,77,109,.2); }
+.btn-green { background: var(--green); color: var(--bg); }
+.btn-green:hover { background: #28B880; }
+
+/* FAB */
+.fab-row {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 200;
+}
+.fab {
+  padding: 12px 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 30px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  white-space: nowrap;
+}
+.fab:hover { border-color: var(--accent); color: var(--accent2); }
+.fab-accent { background: var(--accent); border-color: var(--accent); color: white; }
+.fab-accent:hover { background: #6A5FE8; color: white; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 72px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--bg3);
+  border: 1px solid var(--green);
+  color: var(--green);
+  padding: 10px 22px;
+  border-radius: 30px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0;
+  transition: all .3s;
+  z-index: 300;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* TWO COL */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media(max-width:580px){ .two-col { grid-template-columns: 1fr; } }
+
+/* REWARD ANIMATION */
+@keyframes pop { 0%{transform:scale(1)} 50%{transform:scale(1.15)} 100%{transform:scale(1)} }
+.pop { animation: pop .3s ease; }
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(60px) rotate(360deg); opacity: 0; }
+}
+.confetti-piece {
+  position: fixed;
+  font-size: 20px;
+  pointer-events: none;
+  z-index: 999;
+  animation: confetti-fall .8s ease forwards;
+}
+
+/* ÓRAREND scroll */
+.sched-scroll-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 12px; border: 1px solid var(--border); }
+.schedule-grid { display: grid; grid-template-columns: 52px repeat(5, minmax(88px, 1fr)); gap: 1px; background: var(--border); min-width: 500px; }
+
+/* A/B hét gomb */
+.week-tab { padding: 7px 18px; border-radius: 20px; border: 1.5px solid var(--border2); background: var(--bg3); color: var(--text3); font-family: 'Space Grotesk', sans-serif; font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; }
+.week-tab.active { background: var(--accent); border-color: var(--accent); color: white; }
+.week-tab:hover:not(.active) { border-color: var(--accent); color: var(--accent2); }
+
+/* Vizsga kártya */
+.exam-card { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 7px; border-left: 3px solid var(--orange); }
+.exam-days { font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 700; color: var(--orange); min-width: 38px; text-align: center; line-height: 1; }
+.exam-days.urgent { color: var(--red); }
+.exam-days.soon { color: var(--yellow); }
+.exam-days.ok { color: var(--green); }
+.exam-body { flex: 1; }
+.exam-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.exam-date { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.exam-del { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 14px; opacity: 0; transition: opacity .2s; }
+.exam-card:hover .exam-del { opacity: 1; }
+
+/* Módszer kártyák */
+.method-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 13px; margin-bottom: 9px; overflow: hidden; }
+.method-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; transition: background .15s; }
+.method-header:hover { background: var(--bg3); }
+.method-icon { font-size: 20px; flex-shrink: 0; }
+.method-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.method-sub { font-size: 11px; color: var(--text3); }
+.method-arrow { margin-left: auto; color: var(--text3); font-size: 12px; transition: transform .2s; flex-shrink: 0; }
+.method-arrow.open { transform: rotate(180deg); }
+.method-body { padding: 0 16px 16px; border-top: 1px solid var(--border); }
+.method-step { display: flex; gap: 11px; margin-bottom: 10px; margin-top: 10px; align-items: flex-start; font-size: 12px; color: var(--text2); line-height: 1.6; }
+.step-num { width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: white; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+
+/* Sport / Zene eredmény kártya */
+.result-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: 11px; margin-bottom: 7px; }
+.result-medal { font-size: 24px; flex-shrink: 0; }
+.result-body { flex: 1; }
+.result-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.result-date { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.result-del { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 13px; opacity: 0; transition: opacity .2s; }
+.result-card:hover .result-del { opacity: 1; }
+
+/* Notice */
+.notice { background: rgba(124,111,247,.08); border-left: 3px solid var(--accent); padding: 9px 13px; border-radius: 0 9px 9px 0; font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+
+.day-pick-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  background: var(--bg3);
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+}
+.day-pick-btn.sel {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: white;
+}
+
+/* Flashcard */
+.flashcard-box {
+  background: linear-gradient(135deg, rgba(124,111,247,.12), rgba(79,195,247,.06));
+  border: 1.5px solid rgba(124,111,247,.4);
+  border-radius: 16px;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .15s;
+  position: relative;
+}
+.flashcard-box:active { transform: scale(.98); }
+.fc-front {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.5;
+}
+.fc-back {
+  font-size: 14px;
+  color: var(--green);
+  font-weight: 500;
+  line-height: 1.6;
+}
+.fc-tap-hint {
+  position: absolute;
+  bottom: 8px;
+  right: 12px;
+  font-size: 10px;
+  color: var(--text3);
+}
+.fc-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  font-size: 12px;
+  color: var(--text2);
+}
+.fc-item.known { opacity: .5; border-color: var(--green2); }
+.fc-item-q { flex: 1; }
+.fc-item-del { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 12px; opacity: 0; }
+.fc-item:hover .fc-item-del { opacity: 1; }
+
+/* Fix activity */
+.fix-act-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 13px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--orange);
+  border-radius: 10px;
+  margin-bottom: 6px;
+  font-size: 12px;
+}
+.fix-act-days { font-size: 10px; color: var(--orange); font-weight: 600; margin-top: 2px; }
+.fix-act-del { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 13px; opacity: 0; margin-left: auto; }
+.fix-act-card:hover .fix-act-del { opacity: 1; }
+
+/* Tomorrow suggest */
+.suggest-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text2);
+}
+.suggest-item:last-child { border-bottom: none; }
+.suggest-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">NAPLÓ</div>
+  <button class="nav-btn active" onclick="goTo('nap',this)">☀️ Ma</button>
+  <button class="nav-btn" onclick="goTo('orarend',this)">📋 Órarend</button>
+  <button class="nav-btn" onclick="goTo('pomo',this)">⏱ Tanulás</button>
+  <button class="nav-btn" onclick="goTo('sport',this)">🏅 Sport & Zene</button>
+  <button class="nav-btn" onclick="goTo('erzesek',this)">💛 Hangulat</button>
+  <button class="nav-btn" onclick="goTo('tippek',this)">🧠 Tippek</button>
+  <button class="nav-btn" onclick="goTo('jutalom',this)">🏆 XP</button>
+</nav>
+
+<!-- ===================== MA ===================== -->
+<div id="page-nap" class="page active">
+  <div class="page-header">
+    <div class="page-title">Ma</div>
+    <div class="page-sub" id="today-date-label">töltés...</div>
+  </div>
+
+  <div class="motiv-card" id="daily-quote-card">
+    <div class="motiv-text" id="daily-quote-text">Töltés...</div>
+    <div class="motiv-sub" id="daily-quote-sub"></div>
+    <button class="motiv-refresh-btn" onclick="refreshQuote()">↻ Másik idézet</button>
+  </div>
+
+  <div class="prog-wrap">
+    <div class="prog-top"><span>Napi haladás</span><span id="nap-prog-txt">0 / 0</span></div>
+    <div class="prog-track"><div class="prog-fill" id="nap-prog-fill" style="width:0%"></div></div>
+  </div>
+
+  <!-- HETI ELŐREJELZÉS banner (csak hétfőn látszik) -->
+  <div id="weekly-forecast-banner" style="display:none;margin-bottom:14px;">
+    <div class="card card-accent">
+      <div class="card-title">📅 Heti előrejelzés — ez vár rád</div>
+      <div id="weekly-forecast-content" style="font-size:12px;color:var(--text2);line-height:1.8;"></div>
+    </div>
+  </div>
+
+  <!-- HOLNAPI JAVASLAT kártya -->
+  <div id="tomorrow-suggest-card" style="display:none;margin-bottom:14px;">
+    <div class="card" style="border-color:var(--accent);background:rgba(124,111,247,.06);">
+      <div class="card-title">🔮 Holnap javaslat — fogadd el?</div>
+      <div id="tomorrow-suggest-body" style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:12px;"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="acceptTomorrowPlan()">✅ Igen, rakd be!</button>
+        <button class="btn btn-secondary btn-sm" onclick="dismissTomorrowSuggest()">Nem most</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🌅 Reggel</div>
+  <div class="time-grid" id="grid-reggel"></div>
+  <button class="add-block-btn" onclick="openAddBlock('reggel')">＋ Időblokk hozzáadása</button>
+
+  <div class="section-label">🏫 Iskola / Tanulás</div>
+  <div class="time-grid" id="grid-iskola"></div>
+  <button class="add-block-btn" onclick="openAddBlock('iskola')">＋ Időblokk hozzáadása</button>
+
+  <div class="section-label">🎮 Délután</div>
+  <div class="time-grid" id="grid-delutan"></div>
+  <button class="add-block-btn" onclick="openAddBlock('delutan')">＋ Időblokk hozzáadása</button>
+
+  <div class="section-label">🌙 Este</div>
+  <div class="time-grid" id="grid-este"></div>
+  <button class="add-block-btn" onclick="openAddBlock('este')">＋ Időblokk hozzáadása</button>
+
+  <div class="section-label">✅ Indulás előtt</div>
+  <div class="check-list" id="list-indulas"></div>
+  <button class="add-check-btn" onclick="openAddCheck('indulas')">＋ Elem hozzáadása</button>
+
+  <div class="section-label">🎒 Iskola után</div>
+  <div class="check-list" id="list-hazaer"></div>
+  <button class="add-check-btn" onclick="openAddCheck('hazaer')">＋ Elem hozzáadása</button>
+</div>
+
+<!-- ===================== ÓRAREND ===================== -->
+<div id="page-orarend" class="page">
+  <div class="page-header">
+    <div class="page-title">Órarend</div>
+    <div class="page-sub">Csúsztasd oldalra a táblázatot • kattints egy cellára a szerkesztéshez</div>
+  </div>
+
+  <!-- A/B hét váltó -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+    <span style="font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.08em;">Hét típusa:</span>
+    <div style="display:flex;gap:6px;">
+      <button class="week-tab active" id="tab-weekA" onclick="setWeek('A',this)">📅 A hét</button>
+      <button class="week-tab" id="tab-weekB" onclick="setWeek('B',this)">📅 B hét</button>
+    </div>
+    <span style="font-size:11px;color:var(--text3);margin-left:auto;" id="week-current-label">Jelenlegi: A hét</span>
+  </div>
+
+  <!-- Órarend táblázat — horizontálisan scrollozható -->
+  <div class="sched-scroll-wrap">
+    <div class="schedule-grid" id="sched-grid"></div>
+  </div>
+
+  <!-- Vizsga-visszaszámláló -->
+  <div class="section-label" style="margin-top:18px;">📆 Vizsgák / Dolgozatok</div>
+  <div id="exam-list"></div>
+  <button class="add-check-btn" onclick="openAddExam()">＋ Vizsga / dolgozat hozzáadása</button>
+
+  <!-- Fix délutáni elfoglaltságok -->
+  <div class="section-label" style="margin-top:16px;">🏃 Fix délutáni elfoglaltságok</div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">Ezek automatikusan megjelennek a napi tervben és a holnapi javaslatban.</div>
+  <div id="fixed-activities-list"></div>
+  <button class="add-check-btn" onclick="openAddFixedActivity()">＋ Fix elfoglaltság hozzáadása (pl. edzés, zeneóra)</button>
+
+  <div class="section-label" style="margin-top:16px;">📚 Tantárgyak / Tanárok</div>
+  <div class="check-list" id="list-tantargyak"></div>
+  <button class="add-check-btn" onclick="openAddSubject()">＋ Tantárgy hozzáadása</button>
+</div>
+
+<!-- ===================== TANULÁS / POMO ===================== -->
+<div id="page-pomo" class="page">
+  <div class="page-header">
+    <div class="page-title">Tanulás</div>
+    <div class="page-sub">Pomodoro módszer + háttérhang</div>
+  </div>
+
+  <div class="pomo-wrap">
+    <div class="pomo-subject">
+      <span style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-weight:600;">Mit tanulok most?</span>
+      <input type="text" id="pomo-subject-input" placeholder="pl. Matematika – törtek" />
+    </div>
+    <div class="pomo-type-btns">
+      <button class="pomo-type sel" onclick="setPomoMode(25,5,this)" data-work="25" data-short="5">🎓 Normál (25/5)</button>
+      <button class="pomo-type" onclick="setPomoMode(45,10,this)" data-work="45" data-short="10">🔥 Hosszú (45/10)</button>
+      <button class="pomo-type" onclick="setPomoMode(15,3,this)" data-work="15" data-short="3">⚡ Rövid (15/3)</button>
+    </div>
+    <div class="pomo-display work-color" id="pomo-display">25:00</div>
+    <div class="pomo-status" id="pomo-status">Nyomj Start-ot!</div>
+    <div class="pomo-done-msg" id="pomo-done-msg">🎉 Szuper! +10 XP!</div>
+    <div class="pomo-btns">
+      <button class="btn btn-primary" onclick="pomoCTRL()"><span id="pomo-btn-label">▶ Start</span></button>
+      <button class="btn btn-secondary btn-sm" onclick="pomoReset()">↺ Reset</button>
+      <button class="btn btn-ghost btn-sm" onclick="pomoSkip()">⏭ Ugrás</button>
+    </div>
+    <div class="pomo-sessions" id="pomo-sessions"></div>
+  </div>
+
+  <!-- Szünetcsengő + Víz -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+    <div class="card" style="padding:12px;">
+      <div class="card-title">🔔 Szünetcsengő</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Tanulás után figyelmeztet</div>
+      <select id="break-bell-interval" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:6px;font-size:12px;color:var(--text);outline:none;">
+        <option value="0">Kikapcsolva</option>
+        <option value="25" selected>25 perc után</option>
+        <option value="45">45 perc után</option>
+        <option value="60">60 perc után</option>
+      </select>
+    </div>
+    <div class="card" style="padding:12px;">
+      <div class="card-title">💧 Vízivás</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px;">Emlékeztet ivásra</div>
+      <select id="water-interval" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:6px;font-size:12px;color:var(--text);outline:none;">
+        <option value="0">Kikapcsolva</option>
+        <option value="20" selected>20 percenként</option>
+        <option value="30">30 percenként</option>
+        <option value="45">45 percenként</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="section-label">🎵 Háttérhang</div>
+
+  <div style="display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap;">
+    <button class="mode-tab active" onclick="setSoundTab('nature',this)">🌿 Természet</button>
+    <button class="mode-tab" onclick="setSoundTab('focus',this)">🧠 Fókusz</button>
+    <button class="mode-tab" onclick="setSoundTab('freq',this)">✨ Frekvenciák</button>
+  </div>
+
+  <!-- TERMÉSZET -->
+  <div id="stab-nature" class="sound-tab-content">
+    <div class="sound-grid">
+      <button class="sound-btn" onclick="toggleSound('rain')" id="snd-rain">
+        <span class="sound-icon">🌧</span>
+        <span class="sound-name">Nehéz eső</span>
+        <span class="sound-state">Kattints</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('drizzle')" id="snd-drizzle">
+        <span class="sound-icon">🌦</span>
+        <span class="sound-name">Szitálás</span>
+        <span class="sound-state">Kattints</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('ocean')" id="snd-ocean">
+        <span class="sound-icon">🌊</span>
+        <span class="sound-name">Óceán</span>
+        <span class="sound-state">Kattints</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('forest')" id="snd-forest">
+        <span class="sound-icon">🌲</span>
+        <span class="sound-name">Erdő + tücsök</span>
+        <span class="sound-state">Kattints</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('fire')" id="snd-fire">
+        <span class="sound-icon">🔥</span>
+        <span class="sound-name">Kandalló</span>
+        <span class="sound-state">Kattints</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('wind')" id="snd-wind">
+        <span class="sound-icon">🍃</span>
+        <span class="sound-name">Szél</span>
+        <span class="sound-state">Kattints</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- FÓKUSZ -->
+  <div id="stab-focus" class="sound-tab-content" style="display:none">
+    <div class="notice" style="margin-bottom:10px">🎧 <strong>Fejhallgatóval</strong> működik a legjobban — a két fül külön frekvenciát kap.</div>
+    <div class="sound-grid">
+      <button class="sound-btn" onclick="toggleSound('beta')" id="snd-beta">
+        <span class="sound-icon">⚡</span>
+        <span class="sound-name">Béta 18Hz</span>
+        <span class="sound-state">Fókusz</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('alpha')" id="snd-alpha">
+        <span class="sound-icon">🧠</span>
+        <span class="sound-name">Alfa 10Hz</span>
+        <span class="sound-state">Koncentráció</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('theta')" id="snd-theta">
+        <span class="sound-icon">🌙</span>
+        <span class="sound-name">Théta 6Hz</span>
+        <span class="sound-state">Relaxáció</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('heartbeat')" id="snd-heartbeat">
+        <span class="sound-icon">💓</span>
+        <span class="sound-name">Szívdobogás</span>
+        <span class="sound-state">60 BPM</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('lofi')" id="snd-lofi">
+        <span class="sound-icon">🎵</span>
+        <span class="sound-name">Lo-fi pulzus</span>
+        <span class="sound-state">Ritmus</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('white')" id="snd-white">
+        <span class="sound-icon">📻</span>
+        <span class="sound-name">Fehér zaj</span>
+        <span class="sound-state">Semleges</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- FREKVENCIÁK -->
+  <div id="stab-freq" class="sound-tab-content" style="display:none">
+    <div class="notice" style="margin-bottom:10px">✨ Tiszta szinuszos tónusok — érdemes halkan, háttérben hagyni.</div>
+    <div class="sound-grid">
+      <button class="sound-btn" onclick="toggleSound('hz432')" id="snd-hz432">
+        <span class="sound-icon">🔮</span>
+        <span class="sound-name">432 Hz</span>
+        <span class="sound-state">Természetes A</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('hz528')" id="snd-hz528">
+        <span class="sound-icon">💚</span>
+        <span class="sound-name">528 Hz</span>
+        <span class="sound-state">Regeneráció</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('hz40')" id="snd-hz40">
+        <span class="sound-icon">🌀</span>
+        <span class="sound-name">40 Hz Gamma</span>
+        <span class="sound-state">Agyaktivitás</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('hz396')" id="snd-hz396">
+        <span class="sound-icon">🌸</span>
+        <span class="sound-name">396 Hz</span>
+        <span class="sound-state">Felszabadulás</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('hz639')" id="snd-hz639">
+        <span class="sound-icon">💙</span>
+        <span class="sound-name">639 Hz</span>
+        <span class="sound-state">Kapcsolódás</span>
+      </button>
+      <button class="sound-btn" onclick="toggleSound('hz741')" id="snd-hz741">
+        <span class="sound-icon">🌟</span>
+        <span class="sound-name">741 Hz</span>
+        <span class="sound-state">Tisztaság</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="vol-row">
+    <span class="vol-label">🔊 Hangerő</span>
+    <input type="range" class="vol-slider" id="vol-slider" min="0" max="100" value="35" oninput="setVolume(this.value)">
+    <span class="vol-label" id="vol-val">35%</span>
+  </div>
+
+  <div class="section-label">📋 Tanulandók ma</div>
+  <div class="check-list" id="list-tanulando"></div>
+  <button class="add-check-btn" onclick="openAddCheck('tanulando')">＋ Feladat hozzáadása</button>
+
+  <div class="section-label" style="margin-top:16px;">🃏 Gyors flashcard-ok</div>
+  <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">Dolgozat előtt gyors ismétlés — elő: kérdés, hátul: válasz</div>
+  <div id="flashcard-study-area">
+    <div id="flashcard-display" style="display:none;">
+      <div class="flashcard-box" id="fc-box" onclick="flipCard()">
+        <div class="fc-front" id="fc-front"></div>
+        <div class="fc-back" id="fc-back" style="display:none;"></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;">
+        <button class="btn btn-secondary btn-sm" onclick="fcPrev()">← Előző</button>
+        <span id="fc-counter" style="font-size:12px;color:var(--text3);padding:8px 0;"></span>
+        <button class="btn btn-secondary btn-sm" onclick="fcNext()">Következő →</button>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;margin-top:8px;">
+        <button class="btn btn-sm" style="background:rgba(255,77,109,.15);color:var(--red);border:1px solid rgba(255,77,109,.3);" onclick="fcMark(false)">😕 Még nem megy</button>
+        <button class="btn btn-sm" style="background:rgba(46,204,142,.12);color:var(--green);border:1px solid rgba(46,204,142,.3);" onclick="fcMark(true)">✅ Tudom!</button>
+      </div>
+    </div>
+    <div id="flashcard-empty" style="font-size:12px;color:var(--text3);text-align:center;padding:16px 0;">Még nincs flashcard. Adj hozzá egyet!</div>
+  </div>
+  <div id="flashcard-list" style="margin-top:8px;display:flex;flex-direction:column;gap:5px;"></div>
+  <div style="display:flex;gap:8px;margin-top:8px;">
+    <button class="add-check-btn" onclick="openAddFlashcard()" style="flex:1;">＋ Flashcard hozzáadása</button>
+    <button class="btn btn-secondary btn-sm" onclick="startFlashcardStudy()" id="fc-start-btn" style="display:none;">▶ Tanulás</button>
+  </div>
+</div>
+
+<!-- ===================== HANGULAT ===================== -->
+<div id="page-erzesek" class="page">
+  <div class="page-header">
+    <div class="page-title">Hangulat</div>
+    <div class="page-sub">Hogy érzed magad ma?</div>
+  </div>
+
+  <div class="mood-wrap">
+    <div class="section-label" style="margin-top:0;">😊 Hangulat</div>
+    <div class="mood-emojis" id="mood-emojis">
+      <button class="mood-emoji-btn" onclick="setMood('kiváló','😄','Brutális nap — csak így tovább! 🔥')" >
+        <span>😄</span><span>Kiváló</span>
+      </button>
+      <button class="mood-emoji-btn" onclick="setMood('jó','🙂','Jó nap! Csináld meg azt az egy feladatot, amit halogatol.')" >
+        <span>🙂</span><span>Jó</span>
+      </button>
+      <button class="mood-emoji-btn" onclick="setMood('semleges','😐','Átlagos nap — ez teljesen ok. Kis lépések is számítanak.')" >
+        <span>😐</span><span>Semleges</span>
+      </button>
+      <button class="mood-emoji-btn" onclick="setMood('fáradt','😴','Pihenj 10 percet, aztán egy könnyű feladattal indulj.')" >
+        <span>😴</span><span>Fáradt</span>
+      </button>
+      <button class="mood-emoji-btn" onclick="setMood('stresszes','😤','Lélegezz 4-7-8: belégzés 4, tartás 7, kilégzés 8. Aztán tovább.')" >
+        <span>😤</span><span>Stresszes</span>
+      </button>
+      <button class="mood-emoji-btn" onclick="setMood('rossz','😔','Ma nem kell mindent megcsinálni. Egy apró jó dolog elég.')" >
+        <span>😔</span><span>Rossz</span>
+      </button>
+    </div>
+    <div class="mood-tip-box" id="mood-tip"></div>
+  </div>
+
+  <div class="card card-orange">
+    <div class="card-title">⚡ Energia szint</div>
+    <div class="energy-label-row">
+      <span>Teljesen lemerülve</span>
+      <span id="energy-val-label">5 / 10</span>
+      <span>Maximumon</span>
+    </div>
+    <div class="energy-track"><div class="energy-fill-bar" id="energy-fill-bar" style="width:50%"></div></div>
+    <input type="range" class="energy-slider" id="energy-slider" min="1" max="10" value="5" oninput="setEnergy(this.value)">
+    <div id="energy-tip" style="margin-top:10px;font-size:12px;color:var(--text3);line-height:1.6;"></div>
+  </div>
+
+  <div class="section-label">📈 Heti hangulat</div>
+  <div class="streak-row" id="mood-streak"></div>
+
+  <div class="section-label">📓 Mai napló</div>
+  <div class="card">
+    <textarea id="diary-input" style="width:100%;background:transparent;border:none;outline:none;font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--text2);line-height:1.7;resize:vertical;min-height:100px;" placeholder="Pár szó a napodról... (senki más nem látja)"></textarea>
+    <div style="display:flex;gap:8px;margin-top:8px;justify-content:flex-end;flex-wrap:wrap;">
+      <button class="btn btn-secondary btn-sm" onclick="saveDiary()">💾 Mentés</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportDiary()">📤 Megosztás / Másolás</button>
+    </div>
+  </div>
+
+  <!-- Alvás követés -->
+  <div class="section-label">😴 Alvás követés</div>
+  <div class="card card-accent">
+    <div class="card-title">Tegnap este lefeküdtem</div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+      <input type="time" id="sleep-time" style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:7px 11px;font-size:14px;color:var(--text);outline:none;flex:1;" value="22:00">
+      <input type="time" id="wake-time" style="background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:7px 11px;font-size:14px;color:var(--text);outline:none;flex:1;" value="07:00">
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:8px;">
+      <span>Lefekvés</span><span id="sleep-duration" style="color:var(--green);font-weight:600;">9 óra</span><span>Ébredés</span>
+    </div>
+    <button class="btn btn-secondary btn-sm" onclick="saveSleep()" style="width:100%;">Mentés</button>
+  </div>
+
+  <!-- Hétvégi lista -->
+  <div class="section-label">🗓 Hétvégi teendők</div>
+  <div class="check-list" id="list-weekend"></div>
+  <button class="add-check-btn" onclick="openAddCheck('weekend')">＋ Hétvégi teendő</button>
+
+  <!-- Szülői összefoglaló -->
+  <div class="section-label">👨‍👩‍👧 Heti összefoglaló szülőknek</div>
+  <div class="card">
+    <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">Ez az összefoglaló megmutatja a heti haladást — megoszthatod szüleiddel.</div>
+    <button class="btn btn-primary btn-sm" onclick="generateSummary()" style="width:100%;">📊 Összefoglaló generálása</button>
+    <div id="summary-output" style="display:none;margin-top:12px;padding:12px;background:var(--bg3);border-radius:8px;font-size:12px;color:var(--text2);line-height:1.7;white-space:pre-line;"></div>
+  </div>
+</div>
+
+<!-- ===================== TIPPEK ===================== -->
+<div id="page-tippek" class="page">
+  <div class="page-header">
+    <div class="page-title">Tippek</div>
+    <div class="page-sub">Tanulási szuperképességek</div>
+  </div>
+
+  <div class="tip-grid">
+    <div class="tip-card">
+      <span class="tip-emoji">🍅</span>
+      <div class="tip-title">Pomodoro módszer</div>
+      <div class="tip-text"><span class="tip-highlight">25 perc tanulás, 5 perc szünet.</span> Az agyad jobban tanul kisebb adagokban. 4 blokk után jár egy hosszabb, 20 perces szünet.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-emoji">✍️</span>
+      <div class="tip-title">Aktív felidézés</div>
+      <div class="tip-text">Ne csak olvasd újra — <span class="tip-highlight">csukd be a könyvet és próbáld meg fejből elmondani</span>, mit tanultál. Ez háromszor hatékonyabb.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-emoji">🗓</span>
+      <div class="tip-title">Szétszórt ismétlés</div>
+      <div class="tip-text">1 nap, 3 nap, 7 nap múlva ismételd át. <span class="tip-highlight">A "space repetition" az agyba égeti az anyagot</span> hosszú távon.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-emoji">🧩</span>
+      <div class="tip-title">Chunking</div>
+      <div class="tip-text">Nagy feladatot vágj szét <span class="tip-highlight">kis darabokra</span>. Pl. "Matekdolgozat" → 5 feladattípus → egyenként.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-emoji">💤</span>
+      <div class="tip-title">Alvás = tanulás</div>
+      <div class="tip-text">Alvás közben az agy <span class="tip-highlight">rendezi és rögzíti a nap anyagát.</span> 8 óra alvás = jobb jegyek.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-emoji">🏃</span>
+      <div class="tip-title">Mozgás = fókusz</div>
+      <div class="tip-text"><span class="tip-highlight">10 perc séta vagy torna</span> tanulás előtt megnöveli a koncentrációt. Komolyan.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-emoji">🔕</span>
+      <div class="tip-title">Telefon = ellenség</div>
+      <div class="tip-text">Tedd <span class="tip-highlight">egy másik szobába vagy fiókba</span>, ne csak néma módba. Látni sem szabad tanulás közben.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-emoji">🧠</span>
+      <div class="tip-title">Tanítsd el valakinek</div>
+      <div class="tip-text">Ha el tudod magyarázni valamit <span class="tip-highlight">egyszerűen egy barátodnak</span>, akkor tényleg tudod. Próbáld ki!</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-emoji">🎵</span>
+      <div class="tip-title">Háttérhang</div>
+      <div class="tip-text">Instrumentális zene vagy <span class="tip-highlight">fehér zaj segíthet a fókuszban.</span> Szöveges zenét inkább ne — elvonja a figyelmet.</div>
+    </div>
+    <div class="tip-card">
+      <span class="tip-emoji">💧</span>
+      <div class="tip-title">Hidratálás</div>
+      <div class="tip-text">Az agy <span class="tip-highlight">75% víz.</span> Tanulás közben igyál vizet. Kávé és energiaital nem helyettesíti.</div>
+    </div>
+  </div>
+
+  <!-- Módszer-kártyák -->
+  <div class="section-label" style="margin-top:20px;">📒 Tanulási módszerek lépésről lépésre</div>
+
+  <!-- Sketchnoting -->
+  <div class="method-card">
+    <div class="method-header" onclick="toggleMethod('sketch')">
+      <span class="method-icon">✏️</span>
+      <div>
+        <div class="method-title">Sketchnoting — rajzos jegyzetek</div>
+        <div class="method-sub">Az agy képeket 60.000x gyorsabban dolgoz fel, mint szöveget</div>
+      </div>
+      <span class="method-arrow" id="arr-sketch">▼</span>
+    </div>
+    <div class="method-body" id="body-sketch" style="display:none">
+      <div class="method-step"><span class="step-num">1</span><div><strong>Fogj egy üres lapot</strong> — ne sorokat, hanem szabad teret. Középre írd a témát és karikázd be.</div></div>
+      <div class="method-step"><span class="step-num">2</span><div><strong>Hallgatás közben rajzolj</strong> — minden fontos szóhoz rajzolj egy egyszerű képet. Pálcikaember, nyíl, villám, kérdőjel — bármi megteszi.</div></div>
+      <div class="method-step"><span class="step-num">3</span><div><strong>Kapcsold össze vonalakkal</strong> — mi kapcsolódik mihez? Rajzolj nyilakat, kereteket, buborékokat.</div></div>
+      <div class="method-step"><span class="step-num">4</span><div><strong>Maximálisan 3 szín</strong> — a szín segít a csoportosításban, de több szín zavaró.</div></div>
+      <div class="method-step"><span class="step-num">5</span><div><strong>Este nézd át</strong> — a rajzot csak megnézni elég az ismétléshez. Az agy visszahozza az összefüggést.</div></div>
+      <div style="margin-top:10px;padding:10px;background:rgba(124,111,247,.08);border-radius:8px;font-size:12px;color:var(--text2)">💡 <strong>Tipp:</strong> Nem kell jól rajzolni! Az egyszerűbb rajz jobban ragad meg, mint a tökéletes.</div>
+    </div>
+  </div>
+
+  <!-- Cornell módszer -->
+  <div class="method-card">
+    <div class="method-header" onclick="toggleMethod('cornell')">
+      <span class="method-icon">📓</span>
+      <div>
+        <div class="method-title">Cornell-módszer — 3 zónás füzet</div>
+        <div class="method-sub">Cornell Egyetemen fejlesztett, máig a leghatékonyabb jegyzetelési rendszer</div>
+      </div>
+      <span class="method-arrow" id="arr-cornell">▼</span>
+    </div>
+    <div class="method-body" id="body-cornell" style="display:none">
+      <div style="background:var(--bg3);border-radius:10px;padding:12px;margin-bottom:12px;font-size:12px;">
+        <div style="display:grid;grid-template-columns:1fr 2fr;gap:8px;margin-bottom:8px;">
+          <div style="background:rgba(124,111,247,.12);border:1px solid rgba(124,111,247,.3);border-radius:7px;padding:8px;color:var(--accent2);font-size:11px;"><strong>⬅ KULCSSZAVAK</strong><br>Kérdések, fogalmak<br>~6 cm széles</div>
+          <div style="background:rgba(46,204,142,.08);border:1px solid rgba(46,204,142,.2);border-radius:7px;padding:8px;color:var(--text2);font-size:11px;"><strong>JEGYZETEK ➡</strong><br>Órai anyag, magyarázat<br>Rövidítve, saját szavakkal</div>
+        </div>
+        <div style="background:rgba(255,209,102,.08);border:1px solid rgba(255,209,102,.2);border-radius:7px;padding:8px;color:var(--text2);font-size:11px;"><strong>⬇ ÖSSZEFOGLALÁS</strong> — Este 2-3 mondatban: mi volt a lényeg? ~5 cm magas</div>
+      </div>
+      <div class="method-step"><span class="step-num">1</span><div>Órán: a <strong>jobb oszlopba</strong> írd a jegyzeteket — rövidítve, saját szóval.</div></div>
+      <div class="method-step"><span class="step-num">2</span><div>Óra után: a <strong>bal oszlopba</strong> írd a kulcsszavakat és kérdéseket.</div></div>
+      <div class="method-step"><span class="step-num">3</span><div>Este: <strong>takard le a jobb oldalt</strong>, és a kulcsszavakból mondd el fejből az anyagot.</div></div>
+      <div class="method-step"><span class="step-num">4</span><div>Az <strong>alsó sávba</strong> írj 2-3 mondatos összefoglalást saját szóval.</div></div>
+    </div>
+  </div>
+
+  <!-- Mind map -->
+  <div class="method-card">
+    <div class="method-header" onclick="toggleMethod('mindmap')">
+      <span class="method-icon">🗺</span>
+      <div>
+        <div class="method-title">Mind map — ágrajz</div>
+        <div class="method-sub">Az agy nem lineárisan tárol — a mind map ezt tükrözi</div>
+      </div>
+      <span class="method-arrow" id="arr-mindmap">▼</span>
+    </div>
+    <div class="method-body" id="body-mindmap" style="display:none">
+      <div class="method-step"><span class="step-num">1</span><div><strong>Papír közepére:</strong> a fő téma — pl. "Fotoszintézis" — karikában.</div></div>
+      <div class="method-step"><span class="step-num">2</span><div><strong>Főágak:</strong> 4-6 vastag vonal kifelé — minden főfogalomhoz egy ág. Írd rá a fogalmat.</div></div>
+      <div class="method-step"><span class="step-num">3</span><div><strong>Alágak:</strong> minden főágból vékonyabb vonalak ágaznak ki — részletek, példák.</div></div>
+      <div class="method-step"><span class="step-num">4</span><div><strong>Képek + szín:</strong> minden főágnak más szín. Kis rajzocskák az ágak mellé.</div></div>
+      <div class="method-step"><span class="step-num">5</span><div><strong>Kapcsolatok:</strong> ha két ág összefügg, rajzolj szaggatott vonalat köztük.</div></div>
+      <div style="margin-top:10px;padding:10px;background:rgba(46,204,142,.07);border-radius:8px;font-size:12px;color:var(--text2)">💡 <strong>Mikor használd?</strong> Ismétlésnél, összefoglalóknál, dolgozat előtt áttekintésnek. Egy lapra egy téma.</div>
+    </div>
+  </div>
+
+  <!-- Memorizáció -->
+  <div class="method-card">
+    <div class="method-header" onclick="toggleMethod('memo')">
+      <span class="method-icon">🧠</span>
+      <div>
+        <div class="method-title">Memorizációs trükkök</div>
+        <div class="method-sub">Akroníma, rím, történet — ha az agy vicces, jobban megjegyzi</div>
+      </div>
+      <span class="method-arrow" id="arr-memo">▼</span>
+    </div>
+    <div class="method-body" id="body-memo" style="display:none">
+      <div class="method-step"><span class="step-num">🔤</span><div><strong>Akroníma</strong> — minden szó kezdőbetűjéből egy szó: pl. a bolygók sorrendje: <em>"Minden Vén Ember Megissza A Jutalék Sarki Üdítőjét"</em> = Merkúr, Vénusz, Föld, Mars, Aszteroidák, Jupiter, Szaturnusz, Uránusz.</div></div>
+      <div class="method-step"><span class="step-num">🎵</span><div><strong>Rím / dal</strong> — tedd dallamra a definíciót vagy képletet. Az agyad zenei emlékezete sokkal erősebb.</div></div>
+      <div class="method-step"><span class="step-num">📖</span><div><strong>Sztori</strong> — fűzd történetbe a fogalmakat. Minél abszurdabb, annál jobban ragad. A nevetséges dolgokat az agy automatikusan megjelöli fontosként.</div></div>
+      <div class="method-step"><span class="step-num">🏠</span><div><strong>Memóriapalota</strong> — képzeld el otthonod. Minden szobába "helyezz el" egy fogalmat. Felidézéskor sétálj végig mentálisan.</div></div>
+      <div class="method-step"><span class="step-num">🃏</span><div><strong>Cetlik (flashcard)</strong> — elő: kérdés / fogalom. Hátul: válasz. Naponta nézd át a nehezeket. A Anki app automatikusan ismétli a nehéz kártyákat.</div></div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:20px;">⏰ Pihenő tippek</div>
+  <div class="two-col">
+    <div class="card card-green">
+      <div class="card-title">🌿 5 perces feltöltés</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.7;">
+        • Nyújtózkodj fel<br>
+        • Nézz ki az ablakon (nem képernyőre)<br>
+        • Igyál egy pohár vizet<br>
+        • Mély légzés 3x
+      </div>
+    </div>
+    <div class="card card-accent">
+      <div class="card-title">🔋 Energiafeltöltők</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.7;">
+        • 10 jumping jack<br>
+        • Hideg víz az arcodra<br>
+        • Zenére táncolj 2 percig<br>
+        • Friss levegőn járj egyet
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SPORT & ZENE ===================== -->
+<div id="page-sport" class="page">
+  <div class="page-header">
+    <div class="page-title">Sport & Zene</div>
+    <div class="page-sub">Eredményeid, edzések, motiváció</div>
+  </div>
+
+  <!-- Típus váltó -->
+  <div style="display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;">
+    <button class="mode-tab active" id="st-sport" onclick="setSportTab('sport',this)">🏅 Sport</button>
+    <button class="mode-tab" id="st-zene" onclick="setSportTab('zene',this)">🎵 Zene</button>
+  </div>
+
+  <!-- SPORT -->
+  <div id="sport-tab-sport">
+    <div class="motiv-card" id="sport-quote-card">
+      <div class="motiv-text" id="sport-quote-text">Töltés...</div>
+      <div class="motiv-sub" id="sport-quote-sub"></div>
+      <button class="motiv-refresh-btn" onclick="nextSportQuote()">↻ Másik</button>
+    </div>
+
+    <div class="section-label">🎯 Céljaim</div>
+    <div class="check-list" id="list-sport-goals"></div>
+    <button class="add-check-btn" onclick="openAddCheck('sport-goals')">＋ Cél hozzáadása</button>
+
+    <div class="section-label">🏆 Eredményeim</div>
+    <div id="sport-results-list"></div>
+    <button class="add-check-btn" onclick="openAddResult('sport')">＋ Eredmény rögzítése</button>
+
+    <div class="section-label">📅 Edzésnaptár — ezen a héten</div>
+    <div class="check-list" id="list-sport-training"></div>
+    <button class="add-check-btn" onclick="openAddCheck('sport-training')">＋ Edzés hozzáadása</button>
+  </div>
+
+  <!-- ZENE -->
+  <div id="sport-tab-zene" style="display:none">
+    <div class="motiv-card" id="music-quote-card">
+      <div class="motiv-text" id="music-quote-text">Töltés...</div>
+      <div class="motiv-sub" id="music-quote-sub"></div>
+      <button class="motiv-refresh-btn" onclick="nextMusicQuote()">↻ Másik</button>
+    </div>
+
+    <div class="section-label">🎯 Céljaim</div>
+    <div class="check-list" id="list-music-goals"></div>
+    <button class="add-check-btn" onclick="openAddCheck('music-goals')">＋ Cél hozzáadása</button>
+
+    <div class="section-label">🏆 Eredményeim / Fellépések</div>
+    <div id="music-results-list"></div>
+    <button class="add-check-btn" onclick="openAddResult('music')">＋ Eredmény / fellépés rögzítése</button>
+
+    <div class="section-label">🎹 Gyakorlás ezen a héten</div>
+    <div class="check-list" id="list-music-training"></div>
+    <button class="add-check-btn" onclick="openAddCheck('music-training')">＋ Gyakorlás hozzáadása</button>
+  </div>
+</div>
+
+<!-- ===================== JUTALOM ===================== -->
+<div id="page-jutalom" class="page">
+  <div class="page-header">
+    <div class="page-title">XP & Jutalom</div>
+    <div class="page-sub">Haladásod gamifikálva</div>
+  </div>
+
+  <div class="xp-wrap">
+    <div class="xp-icon">⚡</div>
+    <div class="xp-body">
+      <div class="xp-label">Összes XP</div>
+      <div class="xp-val" id="xp-total">0</div>
+      <div class="xp-next" id="xp-level-label">Szint 1</div>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="section-label">📅 Heti sorozat</div>
+  <div class="streak-row" id="streak-row"></div>
+
+  <div class="section-label">🏆 Jelvények</div>
+  <div class="two-col" id="badges-grid"></div>
+
+  <div class="section-label">📊 XP szerzési módok</div>
+  <div class="card">
+    <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text3);line-height:1.8;">
+      <div>✅ <strong style="color:var(--text);">Feladat kipipálása</strong> → +5 XP</div>
+      <div>⏱ <strong style="color:var(--text);">Pomodoro blokk befejezése</strong> → +10 XP</div>
+      <div>📋 <strong style="color:var(--text);">Órarend kitöltve</strong> → +20 XP</div>
+      <div>💛 <strong style="color:var(--text);">Hangulat naplózva</strong> → +5 XP</div>
+      <div>🔥 <strong style="color:var(--text);">3 nap sorozat</strong> → +30 XP</div>
+      <div>📓 <strong style="color:var(--text);">Napló írva</strong> → +5 XP</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: időblokk -->
+<div class="modal-ov" id="modal-block">
+  <div class="modal">
+    <h2 id="modal-block-title">Időblokk</h2>
+    <div class="form-field">
+      <label>Tevékenység neve</label>
+      <input type="text" id="block-name" placeholder="pl. Matektanulás" />
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Időpont</label>
+        <input type="text" id="block-time" placeholder="pl. 14:00" />
+      </div>
+      <div class="form-field">
+        <label>Időtartam</label>
+        <input type="text" id="block-dur" placeholder="pl. 30 perc" />
+      </div>
+    </div>
+    <div class="form-field">
+      <label>Leírás (opcionális)</label>
+      <input type="text" id="block-desc" placeholder="pl. Egyenletek fejezet" />
+    </div>
+    <div class="form-field">
+      <label>Típus</label>
+      <select id="block-type">
+        <option value="tb-school">🏫 Iskola</option>
+        <option value="tb-study">📚 Tanulás</option>
+        <option value="tb-break">☕ Szünet</option>
+        <option value="tb-sport">🏃 Sport / Mozgás</option>
+        <option value="tb-free">🎮 Szabadidő</option>
+        <option value="tb-sleep">💤 Alvás</option>
+      </select>
+    </div>
+    <input type="hidden" id="block-section" />
+    <input type="hidden" id="block-edit-idx" value="-1" />
+    <div class="modal-actions">
+      <button class="btn btn-danger btn-sm" id="block-delete-btn" onclick="deleteBlock()" style="display:none">Törlés</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-block')">Mégse</button>
+      <button class="btn btn-primary btn-sm" onclick="saveBlock()">Mentés</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: check item -->
+<div class="modal-ov" id="modal-check">
+  <div class="modal">
+    <h2>Elem hozzáadása</h2>
+    <div class="form-field">
+      <label>Szöveg</label>
+      <input type="text" id="check-text-input" placeholder="pl. Pakolj táskát" />
+    </div>
+    <input type="hidden" id="check-list-id" />
+    <input type="hidden" id="check-edit-idx" value="-1" />
+    <div class="modal-actions">
+      <button class="btn btn-danger btn-sm" id="check-delete-btn" onclick="deleteCheckItem()" style="display:none">Törlés</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-check')">Mégse</button>
+      <button class="btn btn-primary btn-sm" onclick="saveCheckItem()">Mentés</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: órarend cella -->
+<div class="modal-ov" id="modal-sched">
+  <div class="modal">
+    <h2 id="modal-sched-title">Óra beírása</h2>
+    <div class="form-field">
+      <label>Tantárgy</label>
+      <input type="text" id="sched-subject" placeholder="pl. Matematika" />
+    </div>
+    <div class="form-field">
+      <label>Tanterem / Megjegyzés</label>
+      <input type="text" id="sched-room" placeholder="pl. 203-as terem" />
+    </div>
+    <input type="hidden" id="sched-cell-key" />
+    <div class="modal-actions">
+      <button class="btn btn-danger btn-sm" id="sched-delete-btn" onclick="deleteSchedCell()" style="display:none">Törlés</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-sched')">Mégse</button>
+      <button class="btn btn-primary btn-sm" onclick="saveSchedCell()">Mentés</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: tantárgy -->
+<div class="modal-ov" id="modal-subject">
+  <div class="modal">
+    <h2>Tantárgy</h2>
+    <div class="form-field">
+      <label>Tantárgy neve</label>
+      <input type="text" id="subject-name" placeholder="pl. Magyar irodalom" />
+    </div>
+    <div class="form-field">
+      <label>Tanár neve (opcionális)</label>
+      <input type="text" id="subject-teacher" placeholder="pl. Nagy Péter" />
+    </div>
+    <input type="hidden" id="subject-edit-idx" value="-1" />
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-subject')">Mégse</button>
+      <button class="btn btn-primary btn-sm" onclick="saveSubject()">Mentés</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: vizsga -->
+<div class="modal-ov" id="modal-exam">
+  <div class="modal">
+    <h2>Vizsga / Dolgozat</h2>
+    <div class="form-field"><label>Tantárgy</label><input type="text" id="exam-subject-in" placeholder="pl. Matematika" /></div>
+    <div class="form-field"><label>Neve / típusa</label><input type="text" id="exam-name-in" placeholder="pl. Témazáró dolgozat" /></div>
+    <div class="form-field"><label>Dátum</label><input type="date" id="exam-date-in" /></div>
+    <div class="form-field"><label>Megjegyzés</label><input type="text" id="exam-note-in" placeholder="pl. Törtek fejezet" /></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-exam')">Mégse</button>
+      <button class="btn btn-primary btn-sm" onclick="saveExam()">Mentés</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: eredmény -->
+<div class="modal-ov" id="modal-result">
+  <div class="modal">
+    <h2>Eredmény rögzítése 🏆</h2>
+    <input type="hidden" id="result-type-in" />
+    <div class="form-field"><label>Eredmény / esemény neve</label><input type="text" id="result-name-in" placeholder="pl. Kerületi úszóverseny — 2. hely" /></div>
+    <div class="form-field"><label>Dátum</label><input type="date" id="result-date-in" /></div>
+    <div class="form-field"><label>Megjegyzés</label><input type="text" id="result-note-in" placeholder="pl. 100m pillangó, személyes rekord" /></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-result')">Mégse</button>
+      <button class="btn btn-primary btn-sm" onclick="saveResult()">Mentés! 🎉</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Fix elfoglaltság -->
+<div class="modal-ov" id="modal-fixed-act">
+  <div class="modal">
+    <h2>Fix elfoglaltság</h2>
+    <div class="form-field"><label>Megnevezés</label><input type="text" id="fa-name" placeholder="pl. Úszóedzés, Zongoraóra" /></div>
+    <div class="form-field"><label>Időpont</label><input type="text" id="fa-time" placeholder="pl. 16:00–18:00" /></div>
+    <div class="form-field">
+      <label>Napok</label>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;" id="fa-days-wrap">
+        <button class="day-pick-btn" data-day="0" onclick="toggleDayPick(this)">H</button>
+        <button class="day-pick-btn" data-day="1" onclick="toggleDayPick(this)">K</button>
+        <button class="day-pick-btn" data-day="2" onclick="toggleDayPick(this)">Sze</button>
+        <button class="day-pick-btn" data-day="3" onclick="toggleDayPick(this)">Cs</button>
+        <button class="day-pick-btn" data-day="4" onclick="toggleDayPick(this)">P</button>
+        <button class="day-pick-btn" data-day="5" onclick="toggleDayPick(this)">Szo</button>
+        <button class="day-pick-btn" data-day="6" onclick="toggleDayPick(this)">V</button>
+      </div>
+    </div>
+    <div class="form-field"><label>Típus</label>
+      <select id="fa-type" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:9px;padding:9px 12px;font-size:13px;color:var(--text);outline:none;">
+        <option value="sport">🏃 Sport / Edzés</option>
+        <option value="music">🎵 Zeneóra / Próba</option>
+        <option value="other">📌 Egyéb</option>
+      </select>
+    </div>
+    <input type="hidden" id="fa-edit-idx" value="-1">
+    <div class="modal-actions">
+      <button class="btn btn-danger btn-sm" id="fa-del-btn" onclick="delFixedActivity()" style="display:none">Törlés</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-fixed-act')">Mégse</button>
+      <button class="btn btn-primary btn-sm" onclick="saveFixedActivity()">Mentés</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Flashcard -->
+<div class="modal-ov" id="modal-flashcard">
+  <div class="modal">
+    <h2>Flashcard hozzáadása 🃏</h2>
+    <div class="form-field"><label>Kérdés / Fogalom (elő)</label><textarea id="fc-question" placeholder="pl. Mi a fotoszintézis?"></textarea></div>
+    <div class="form-field"><label>Válasz / Magyarázat (hátul)</label><textarea id="fc-answer" placeholder="pl. A növények fényenergiából cukrot állítanak elő..."></textarea></div>
+    <div class="form-field"><label>Tantárgy (opcionális)</label><input type="text" id="fc-subject" placeholder="pl. Biológia" /></div>
+    <input type="hidden" id="fc-edit-idx" value="-1">
+    <div class="modal-actions">
+      <button class="btn btn-danger btn-sm" id="fc-del-btn" onclick="delFlashcard()" style="display:none">Törlés</button>
+      <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-flashcard')">Mégse</button>
+      <button class="btn btn-primary btn-sm" onclick="saveFlashcard()">Mentés</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="fab-row">
+  <button class="fab fab-accent" onclick="goTo('pomo', document.querySelector('.nav-btn:nth-child(4)'))">⏱ Tanulás kezdése</button>
+</div>
+
+<script>
+// ===================== STATE =====================
+let state = JSON.parse(localStorage.getItem('naplo_state') || 'null') || {
+  blocks: { reggel: [], iskola: [], delutan: [], este: [] },
+  checks: { indulas: [], hazaer: [], tanulando: [], tantargyak: [], 'sport-goals': [], 'sport-training': [], 'music-goals': [], 'music-training': [], weekend: [] }, fixedActivities: [], flashcards: [], exams: [],
+  sched: {},
+  mood: null,
+  energy: 5,
+  xp: 0,
+  diary: '',
+  streak: [],
+  pomodoros: 0,
+  quoteIdx: 0,
+};
+
+function save() {
+  localStorage.setItem('naplo_state', JSON.stringify(state));
+}
+
+// ===================== QUOTES =====================
+const quotes = [
+  { text: "Nem kell tökéletesnek lenni. Csak el kell kezdeni.", sub: "— Az első lépés mindig a legnehezebb" },
+  { text: "Minden profi volt egyszer kezdő.", sub: "— Mindenki nulláról indult" },
+  { text: "A siker nem a tehetségen múlik, hanem azon, hogy nem adod fel.", sub: "— Csak csináld" },
+  { text: "Az iskola nem a jegyekről szól — arról szól, hogy megtanuld, hogyan tanulj.", sub: "— Életre szóló skill" },
+  { text: "Egy rossz nap nem jelent rossz életet.", sub: "— Holnap új kezdet" },
+  { text: "Minél többet csinálsz, annál könnyebb lesz.", sub: "— A rutin szuperképesség" },
+  { text: "Te magad döntöd el, ki leszel. Az iskola csak az eszköz.", sub: "— A jövőd a kezedben van" },
+  { text: "A legokosabb emberek is hibáznak és kérnek segítséget.", sub: "— Ez nem gyengeség, ez okosság" },
+  { text: "25 perc koncentráció + 5 perc szünet = szuperhatékonyság.", sub: "— A Pomodoro módszer" },
+  { text: "Az agy edzésre szorul, mint az izom. Minden tanulás erősíti.", sub: "— Neuroplaszticitás" },
+];
+
+function refreshQuote() {
+  state.quoteIdx = (state.quoteIdx + 1) % quotes.length;
+  renderQuote();
+  save();
+}
+
+function renderQuote() {
+  const q = quotes[state.quoteIdx];
+  document.getElementById('daily-quote-text').textContent = q.text;
+  document.getElementById('daily-quote-sub').textContent = q.sub;
+}
+
+// ===================== DATE =====================
+function renderDate() {
+  const days = ['Vasárnap','Hétfő','Kedd','Szerda','Csütörtök','Péntek','Szombat'];
+  const months = ['január','február','március','április','május','június','július','augusztus','szeptember','október','november','december'];
+  const now = new Date();
+  document.getElementById('today-date-label').textContent =
+    `${now.getFullYear()}. ${months[now.getMonth()]} ${now.getDate()}. — ${days[now.getDay()]}`;
+}
+
+// ===================== TABS =====================
+function goTo(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+}
+
+// ===================== TIME BLOCKS =====================
+const typeIcons = {
+  'tb-school': '🏫',
+  'tb-study': '📚',
+  'tb-break': '☕',
+  'tb-sport': '🏃',
+  'tb-free': '🎮',
+  'tb-sleep': '💤',
+};
+
+function renderBlocks() {
+  ['reggel','iskola','delutan','este'].forEach(sec => {
+    const grid = document.getElementById('grid-'+sec);
+    if(!grid) return;
+    grid.innerHTML = '';
+    (state.blocks[sec] || []).forEach((b, i) => {
+      const row = document.createElement('div');
+      row.className = 'time-row';
+      row.innerHTML = `
+        <div class="time-label">${b.time || ''}</div>
+        <div class="time-block ${b.type || 'tb-study'} ${b.done ? 'done' : ''}" onclick="toggleBlock('${sec}',${i})">
+          <span class="tb-icon">${typeIcons[b.type] || '📌'}</span>
+          <div class="tb-body">
+            <div class="tb-name">${b.name}</div>
+            ${b.desc ? `<div class="tb-desc">${b.desc}</div>` : ''}
+          </div>
+          ${b.dur ? `<span class="tb-dur">${b.dur}</span>` : ''}
+          <button class="tb-edit" onclick="openEditBlock(event,'${sec}',${i})">✏️</button>
+        </div>`;
+      grid.appendChild(row);
+    });
+    updateProgress();
+  });
+}
+
+function toggleBlock(sec, i) {
+  state.blocks[sec][i].done = !state.blocks[sec][i].done;
+  if(state.blocks[sec][i].done) { addXP(5); showToast('✅ +5 XP!'); }
+  save();
+  renderBlocks();
+}
+
+function openAddBlock(sec) {
+  document.getElementById('block-section').value = sec;
+  document.getElementById('block-edit-idx').value = -1;
+  document.getElementById('block-name').value = '';
+  document.getElementById('block-time').value = '';
+  document.getElementById('block-dur').value = '';
+  document.getElementById('block-desc').value = '';
+  document.getElementById('block-type').value = 'tb-study';
+  document.getElementById('modal-block-title').textContent = 'Új időblokk';
+  document.getElementById('block-delete-btn').style.display = 'none';
+  openModal('modal-block');
+}
+
+function openEditBlock(e, sec, i) {
+  e.stopPropagation();
+  const b = state.blocks[sec][i];
+  document.getElementById('block-section').value = sec;
+  document.getElementById('block-edit-idx').value = i;
+  document.getElementById('block-name').value = b.name;
+  document.getElementById('block-time').value = b.time || '';
+  document.getElementById('block-dur').value = b.dur || '';
+  document.getElementById('block-desc').value = b.desc || '';
+  document.getElementById('block-type').value = b.type || 'tb-study';
+  document.getElementById('modal-block-title').textContent = 'Szerkesztés';
+  document.getElementById('block-delete-btn').style.display = 'inline-flex';
+  openModal('modal-block');
+}
+
+function saveBlock() {
+  const sec = document.getElementById('block-section').value;
+  const idx = parseInt(document.getElementById('block-edit-idx').value);
+  const b = {
+    name: document.getElementById('block-name').value.trim() || 'Névtelen',
+    time: document.getElementById('block-time').value.trim(),
+    dur: document.getElementById('block-dur').value.trim(),
+    desc: document.getElementById('block-desc').value.trim(),
+    type: document.getElementById('block-type').value,
+    done: false,
+  };
+  if(!b.name) return;
+  if(idx === -1) state.blocks[sec].push(b);
+  else { b.done = state.blocks[sec][idx].done; state.blocks[sec][idx] = b; }
+  save(); renderBlocks(); closeModal('modal-block');
+}
+
+function deleteBlock() {
+  const sec = document.getElementById('block-section').value;
+  const idx = parseInt(document.getElementById('block-edit-idx').value);
+  state.blocks[sec].splice(idx, 1);
+  save(); renderBlocks(); closeModal('modal-block');
+}
+
+function updateProgress() {
+  let total = 0, done = 0;
+  Object.values(state.blocks).forEach(arr => arr.forEach(b => { total++; if(b.done) done++; }));
+  Object.values(state.checks).forEach(arr => arr.forEach(c => { total++; if(c.done) done++; }));
+  document.getElementById('nap-prog-txt').textContent = `${done} / ${total}`;
+  document.getElementById('nap-prog-fill').style.width = total ? (done/total*100)+'%' : '0%';
+}
+
+// ===================== CHECKLISTS =====================
+function renderChecks() {
+  ['indulas','hazaer','tanulando','tantargyak','sport-goals','sport-training','music-goals','music-training','weekend'].forEach(lid => {
+    const el = document.getElementById('list-'+lid);
+    if(!el) return;
+    el.innerHTML = '';
+    (state.checks[lid] || []).forEach((item, i) => {
+      const div = document.createElement('div');
+      div.className = 'check-item' + (item.done ? ' done' : '');
+      div.onclick = () => toggleCheck(lid, i);
+      div.innerHTML = `
+        <div class="check-box">${item.done ? '✓' : ''}</div>
+        <div class="check-text">${item.text}</div>
+        <button class="check-edit" onclick="openEditCheck(event,'${lid}',${i})">✏️</button>`;
+      el.appendChild(div);
+    });
+    updateProgress();
+  });
+}
+
+function toggleCheck(lid, i) {
+  state.checks[lid][i].done = !state.checks[lid][i].done;
+  if(state.checks[lid][i].done) { addXP(5); showToast('✅ +5 XP!'); }
+  save(); renderChecks();
+}
+
+function openAddCheck(lid) {
+  document.getElementById('check-list-id').value = lid;
+  document.getElementById('check-edit-idx').value = -1;
+  document.getElementById('check-text-input').value = '';
+  document.getElementById('check-delete-btn').style.display = 'none';
+  openModal('modal-check');
+}
+
+function openEditCheck(e, lid, i) {
+  e.stopPropagation();
+  document.getElementById('check-list-id').value = lid;
+  document.getElementById('check-edit-idx').value = i;
+  document.getElementById('check-text-input').value = state.checks[lid][i].text;
+  document.getElementById('check-delete-btn').style.display = 'inline-flex';
+  openModal('modal-check');
+}
+
+function saveCheckItem() {
+  const lid = document.getElementById('check-list-id').value;
+  const idx = parseInt(document.getElementById('check-edit-idx').value);
+  const txt = document.getElementById('check-text-input').value.trim();
+  if(!txt) return;
+  if(idx === -1) state.checks[lid].push({ text: txt, done: false });
+  else state.checks[lid][idx].text = txt;
+  save(); renderChecks(); closeModal('modal-check');
+}
+
+function deleteCheckItem() {
+  const lid = document.getElementById('check-list-id').value;
+  const idx = parseInt(document.getElementById('check-edit-idx').value);
+  state.checks[lid].splice(idx, 1);
+  save(); renderChecks(); closeModal('modal-check');
+}
+
+// ===================== ÓRAREND =====================
+const schedDays = ['Hétfő','Kedd','Szerda','Csütörtök','Péntek'];
+const schedTimes = ['7:00','7:45','8:35','9:25','10:20','11:10','12:00','12:45','13:35'];
+
+function renderSched() {
+  // A/B hét prefix beépítve
+  const week = state.currentWeek || 'A';
+  const prefix = `w${week}_`;
+  const grid = document.getElementById('sched-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  // Header
+  const emptyHead = document.createElement('div');
+  emptyHead.className = 'sched-head';
+  emptyHead.textContent = 'Óra';
+  grid.appendChild(emptyHead);
+  schedDays.forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'sched-head';
+    h.textContent = d;
+    grid.appendChild(h);
+  });
+  // Rows
+  schedTimes.forEach((t, ti) => {
+    const tl = document.createElement('div');
+    tl.className = 'sched-time';
+    tl.textContent = `${ti+1}. ${t}`;
+    grid.appendChild(tl);
+    schedDays.forEach((d, di) => {
+      const key = prefix + `${di}_${ti}`;
+      const cell = document.createElement('div');
+      cell.className = 'sched-cell' + (state.sched[key] ? ' filled' : '');
+      cell.onclick = () => openSchedCell(key, d, t);
+      if(state.sched[key]) {
+        cell.innerHTML = `<div class="sched-cell-inner">${state.sched[key].subject}</div>${state.sched[key].room ? `<div class="sched-cell-sub">${state.sched[key].room}</div>` : ''}`;
+      }
+      grid.appendChild(cell);
+    });
+  });
+}
+
+function openSchedCell(key, day, time) {
+  document.getElementById('sched-cell-key').value = key;
+  document.getElementById('modal-sched-title').textContent = `${day} — ${time}`;
+  const existing = state.sched[key];
+  document.getElementById('sched-subject').value = existing ? existing.subject : '';
+  document.getElementById('sched-room').value = existing ? (existing.room || '') : '';
+  document.getElementById('sched-delete-btn').style.display = existing ? 'inline-flex' : 'none';
+  openModal('modal-sched');
+}
+
+function saveSchedCell() {
+  const key = document.getElementById('sched-cell-key').value;
+  const sub = document.getElementById('sched-subject').value.trim();
+  if(!sub) { deleteSchedCell(); return; }
+  state.sched[key] = { subject: sub, room: document.getElementById('sched-room').value.trim() };
+  save(); renderSched(); closeModal('modal-sched');
+}
+
+function deleteSchedCell() {
+  const key = document.getElementById('sched-cell-key').value;
+  delete state.sched[key];
+  save(); renderSched(); closeModal('modal-sched');
+}
+
+function openAddSubject() {
+  document.getElementById('subject-name').value = '';
+  document.getElementById('subject-teacher').value = '';
+  document.getElementById('subject-edit-idx').value = -1;
+  openModal('modal-subject');
+}
+
+function saveSubject() {
+  const name = document.getElementById('subject-name').value.trim();
+  if(!name) return;
+  state.checks['tantargyak'].push({ text: name + (document.getElementById('subject-teacher').value.trim() ? ' — ' + document.getElementById('subject-teacher').value.trim() : ''), done: false });
+  save(); renderChecks(); closeModal('modal-subject');
+}
+
+// ===================== POMODORO =====================
+let pomoWork = 25, pomoShort = 5;
+let pomoSeconds = 25 * 60;
+let pomoRunning = false;
+let pomoBreak = false;
+let pomoInterval = null;
+let pomoSession = 0;
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playBeep(freq = 440, dur = 0.4, vol = 0.3, type = 'sine') {
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = type;
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    osc.start(audioCtx.currentTime);
+    osc.stop(audioCtx.currentTime + dur);
+  } catch(e){}
+}
+
+function playSuccess() {
+  playBeep(523, 0.2, 0.3);
+  setTimeout(() => playBeep(659, 0.2, 0.3), 200);
+  setTimeout(() => playBeep(784, 0.4, 0.3), 400);
+}
+
+function playDone() {
+  [523,587,659,698,784].forEach((f,i) => setTimeout(() => playBeep(f, 0.3, 0.25), i*120));
+}
+
+function playTick() { playBeep(800, 0.05, 0.06, 'square'); }
+
+function setPomoMode(work, short, btn) {
+  pomoWork = work; pomoShort = short;
+  pomoReset();
+  document.querySelectorAll('.pomo-type').forEach(b => b.classList.remove('sel'));
+  btn.classList.add('sel');
+}
+
+function pomoCTRL() {
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  pomoRunning = !pomoRunning;
+  document.getElementById('pomo-btn-label').textContent = pomoRunning ? '⏸ Pause' : '▶ Start';
+  if(pomoRunning) {
+    startBreakBell();
+    startWaterReminder();
+    pomoInterval = setInterval(() => {
+      pomoSeconds--;
+      if(pomoSeconds <= 0) {
+        clearInterval(pomoInterval);
+        pomoRunning = false;
+        if(!pomoBreak) {
+          pomoSession++;
+          addXP(10);
+          playDone();
+          showToast('🎉 Pomodoro kész! +10 XP');
+          spawnConfetti();
+          document.getElementById('pomo-done-msg').classList.add('show');
+          setTimeout(() => document.getElementById('pomo-done-msg').classList.remove('show'), 3000);
+          pomoBreak = true;
+          pomoSeconds = pomoShort * 60;
+          document.getElementById('pomo-status').textContent = `☕ Szünet! ${pomoShort} perc`;
+          document.getElementById('pomo-display').className = 'pomo-display break-color';
+        } else {
+          playBeep(440, 0.5);
+          pomoBreak = false;
+          pomoSeconds = pomoWork * 60;
+          document.getElementById('pomo-status').textContent = 'Szünet vége — vissza a munkába!';
+          document.getElementById('pomo-display').className = 'pomo-display work-color';
+        }
+        document.getElementById('pomo-btn-label').textContent = '▶ Start';
+        renderPomoSessions();
+      }
+      renderPomoTimer();
+    }, 1000);
+  } else {
+    clearInterval(pomoInterval);
+  }
+}
+
+function pomoReset() {
+  clearInterval(pomoInterval);
+  pomoRunning = false; pomoBreak = false;
+  pomoSeconds = pomoWork * 60;
+  document.getElementById('pomo-btn-label').textContent = '▶ Start';
+  document.getElementById('pomo-status').textContent = 'Nyomj Start-ot!';
+  document.getElementById('pomo-display').className = 'pomo-display work-color';
+  document.getElementById('pomo-done-msg').classList.remove('show');
+  renderPomoTimer();
+}
+
+function pomoSkip() {
+  clearInterval(pomoInterval);
+  pomoRunning = false;
+  if(pomoBreak) { pomoBreak = false; pomoSeconds = pomoWork * 60; document.getElementById('pomo-display').className = 'pomo-display work-color'; }
+  else { pomoBreak = true; pomoSeconds = pomoShort * 60; document.getElementById('pomo-display').className = 'pomo-display break-color'; }
+  document.getElementById('pomo-btn-label').textContent = '▶ Start';
+  renderPomoTimer();
+}
+
+function renderPomoTimer() {
+  const m = Math.floor(pomoSeconds / 60);
+  const s = pomoSeconds % 60;
+  const disp = document.getElementById('pomo-display');
+  disp.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  if(!pomoBreak && pomoSeconds <= 60) disp.classList.add('urgent');
+  else disp.classList.remove('urgent');
+  document.getElementById('pomo-status').textContent = pomoBreak
+    ? `☕ Szünet — ${m}:${String(s).padStart(2,'0')} maradt`
+    : (pomoRunning ? `🎓 ${document.getElementById('pomo-subject-input').value || 'Tanulás folyamatban'}` : document.getElementById('pomo-status').textContent);
+}
+
+function renderPomoSessions() {
+  const el = document.getElementById('pomo-sessions');
+  el.innerHTML = '';
+  for(let i = 0; i < 4; i++) {
+    const d = document.createElement('div');
+    d.className = 'session-dot' + (i < pomoSession ? ' done' : (i === pomoSession ? ' current' : ''));
+    el.appendChild(d);
+  }
+}
+
+// ===================== SOUNDS — komplett hangmotor =====================
+let activeSound = null;
+let soundNodes = [];
+let masterGain = null;
+let soundVolume = 0.35;
+
+function getAC() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function setSoundTab(tab, btn) {
+  document.querySelectorAll('.sound-tab-content').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.mode-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('stab-' + tab).style.display = 'block';
+  btn.classList.add('active');
+}
+
+function toggleSound(id) {
+  const ac = getAC();
+  if (ac.state === 'suspended') ac.resume();
+  if (activeSound === id) { stopSound(); return; }
+  stopSound();
+  activeSound = id;
+  masterGain = ac.createGain();
+  masterGain.gain.value = soundVolume;
+  masterGain.connect(ac.destination);
+  playSound(id, ac, masterGain);
+  document.querySelectorAll('.sound-btn').forEach(b => {
+    b.classList.remove('playing');
+    b.querySelector('.sound-state').textContent = b.querySelector('.sound-state').dataset.orig || b.querySelector('.sound-state').textContent;
+  });
+  const btn = document.getElementById('snd-' + id);
+  if (btn) {
+    const st = btn.querySelector('.sound-state');
+    if (!st.dataset.orig) st.dataset.orig = st.textContent;
+    btn.classList.add('playing');
+    st.textContent = '▶ Játszik';
+  }
+}
+
+function stopSound() {
+  soundNodes.forEach(n => { try { n.stop(); } catch(e){} });
+  soundNodes = [];
+  activeSound = null;
+  masterGain = null;
+  document.querySelectorAll('.sound-btn').forEach(b => {
+    b.classList.remove('playing');
+    const st = b.querySelector('.sound-state');
+    if (st && st.dataset.orig) st.textContent = st.dataset.orig;
+  });
+}
+
+function makeNoiseBuf(ac, seconds, filterType, filterFreq, filterQ) {
+  const len = ac.sampleRate * seconds;
+  const buf = ac.createBuffer(1, len, ac.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+  const src = ac.createBufferSource();
+  src.buffer = buf;
+  src.loop = true;
+  const flt = ac.createBiquadFilter();
+  flt.type = filterType;
+  flt.frequency.value = filterFreq;
+  if (filterQ) flt.Q.value = filterQ;
+  src.connect(flt);
+  return { src, flt };
+}
+
+function makeTone(ac, freq, type, gainVal) {
+  const osc = ac.createOscillator();
+  osc.type = type || 'sine';
+  osc.frequency.value = freq;
+  const g = ac.createGain();
+  g.gain.value = gainVal || 0.3;
+  osc.connect(g);
+  return { osc, g };
+}
+
+function playSound(id, ac, out) {
+  switch(id) {
+
+    // ===== TERMÉSZET =====
+
+    case 'rain': {
+      // Heavy rain: broadband noise + low rumble
+      const { src: s1, flt: f1 } = makeNoiseBuf(ac, 4, 'bandpass', 1800, 0.8);
+      const g1 = ac.createGain(); g1.gain.value = 0.8;
+      f1.connect(g1); g1.connect(out); s1.start(); soundNodes.push(s1);
+      const { src: s2, flt: f2 } = makeNoiseBuf(ac, 4, 'lowpass', 300);
+      const g2 = ac.createGain(); g2.gain.value = 0.4;
+      f2.connect(g2); g2.connect(out); s2.start(); soundNodes.push(s2);
+      // Occasional thunder rumble
+      const lfo = ac.createOscillator(); lfo.frequency.value = 0.07;
+      const lfoG = ac.createGain(); lfoG.gain.value = 0.25;
+      lfo.connect(lfoG); lfoG.connect(g1.gain);
+      lfo.start(); soundNodes.push(lfo);
+      break;
+    }
+
+    case 'drizzle': {
+      // Light drizzle: higher freq noise, softer
+      const { src, flt } = makeNoiseBuf(ac, 3, 'bandpass', 3500, 1.5);
+      const g = ac.createGain(); g.gain.value = 0.5;
+      flt.connect(g); g.connect(out); src.start(); soundNodes.push(src);
+      // Gentle pitter-patter LFO modulation
+      const lfo = ac.createOscillator(); lfo.frequency.value = 3.5;
+      const lfoG = ac.createGain(); lfoG.gain.value = 0.15;
+      lfo.connect(lfoG); lfoG.connect(g.gain);
+      lfo.start(); soundNodes.push(lfo);
+      break;
+    }
+
+    case 'ocean': {
+      // Ocean waves: slow swelling noise
+      const { src, flt } = makeNoiseBuf(ac, 5, 'lowpass', 500);
+      const g = ac.createGain(); g.gain.value = 0.6;
+      flt.connect(g); g.connect(out); src.start(); soundNodes.push(src);
+      // Wave rhythm: 0.12 Hz (one wave every ~8 sec)
+      const lfo = ac.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.12;
+      const lfoG = ac.createGain(); lfoG.gain.value = 0.4;
+      lfo.connect(lfoG); lfoG.connect(g.gain);
+      lfo.start(); soundNodes.push(lfo);
+      // Second wave layer slightly offset
+      const { src: s2, flt: f2 } = makeNoiseBuf(ac, 4, 'lowpass', 800);
+      const g2 = ac.createGain(); g2.gain.value = 0.3;
+      f2.connect(g2); g2.connect(out); s2.start(); soundNodes.push(s2);
+      const lfo2 = ac.createOscillator(); lfo2.frequency.value = 0.09;
+      const lfoG2 = ac.createGain(); lfoG2.gain.value = 0.3;
+      lfo2.connect(lfoG2); lfoG2.connect(g2.gain);
+      lfo2.start(); soundNodes.push(lfo2);
+      break;
+    }
+
+    case 'forest': {
+      // Forest: low wind base + cricket chirps
+      const { src: wind, flt: wf } = makeNoiseBuf(ac, 4, 'bandpass', 600, 0.5);
+      const wg = ac.createGain(); wg.gain.value = 0.3;
+      wf.connect(wg); wg.connect(out); wind.start(); soundNodes.push(wind);
+      // Cricket tones: 3.5kHz chirp rhythm
+      const cric = ac.createOscillator(); cric.type = 'square'; cric.frequency.value = 3500;
+      const cricG = ac.createGain(); cricG.gain.value = 0;
+      const cricLfo = ac.createOscillator(); cricLfo.frequency.value = 4.2;
+      const cricLfoG = ac.createGain(); cricLfoG.gain.value = 0.04;
+      cricLfo.connect(cricLfoG); cricLfoG.connect(cricG.gain);
+      cric.connect(cricG); cricG.connect(out);
+      cric.start(); cricLfo.start(); soundNodes.push(cric, cricLfo);
+      // Second cricket slightly different
+      const cric2 = ac.createOscillator(); cric2.type = 'square'; cric2.frequency.value = 3800;
+      const cric2G = ac.createGain(); cric2G.gain.value = 0;
+      const lfo2 = ac.createOscillator(); lfo2.frequency.value = 3.7;
+      const lfoG2 = ac.createGain(); lfoG2.gain.value = 0.03;
+      lfo2.connect(lfoG2); lfoG2.connect(cric2G.gain);
+      cric2.connect(cric2G); cric2G.connect(out);
+      cric2.start(); lfo2.start(); soundNodes.push(cric2, lfo2);
+      break;
+    }
+
+    case 'fire': {
+      // Fireplace: low crackle noise with flicker
+      const { src, flt } = makeNoiseBuf(ac, 3, 'lowpass', 350);
+      const g = ac.createGain(); g.gain.value = 0.6;
+      flt.connect(g); g.connect(out); src.start(); soundNodes.push(src);
+      const { src: s2, flt: f2 } = makeNoiseBuf(ac, 2, 'bandpass', 700, 2);
+      const g2 = ac.createGain(); g2.gain.value = 0.25;
+      f2.connect(g2); g2.connect(out); s2.start(); soundNodes.push(s2);
+      // Flickering
+      const lfo = ac.createOscillator(); lfo.type = 'sawtooth'; lfo.frequency.value = 1.3;
+      const lfoG = ac.createGain(); lfoG.gain.value = 0.2;
+      lfo.connect(lfoG); lfoG.connect(g.gain);
+      lfo.start(); soundNodes.push(lfo);
+      break;
+    }
+
+    case 'wind': {
+      const { src, flt } = makeNoiseBuf(ac, 5, 'bandpass', 400, 0.3);
+      const g = ac.createGain(); g.gain.value = 0.5;
+      flt.connect(g); g.connect(out); src.start(); soundNodes.push(src);
+      const lfo = ac.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 0.08;
+      const lfoG = ac.createGain(); lfoG.gain.value = 0.35;
+      lfo.connect(lfoG); lfoG.connect(g.gain);
+      lfo.start(); soundNodes.push(lfo);
+      // High whistle
+      const { src: s2, flt: f2 } = makeNoiseBuf(ac, 3, 'bandpass', 1200, 1.5);
+      const g2 = ac.createGain(); g2.gain.value = 0.2;
+      f2.connect(g2); g2.connect(out); s2.start(); soundNodes.push(s2);
+      break;
+    }
+
+    // ===== BINAURÁLIS ÜTEMEK =====
+
+    case 'beta': {
+      // Beta 18Hz: left 200Hz, right 218Hz
+      const L = ac.createOscillator(); L.frequency.value = 200;
+      const R = ac.createOscillator(); R.frequency.value = 218;
+      const gL = ac.createGain(); gL.gain.value = 0.25;
+      const gR = ac.createGain(); gR.gain.value = 0.25;
+      // Stereo panner
+      const panL = ac.createStereoPanner ? ac.createStereoPanner() : null;
+      const panR = ac.createStereoPanner ? ac.createStereoPanner() : null;
+      L.connect(gL);
+      R.connect(gR);
+      if (panL && panR) {
+        panL.pan.value = -1; panR.pan.value = 1;
+        gL.connect(panL); panL.connect(out);
+        gR.connect(panR); panR.connect(out);
+      } else {
+        gL.connect(out); gR.connect(out);
+      }
+      // Pink noise carrier
+      const { src: noise, flt: nf } = makeNoiseBuf(ac, 4, 'lowpass', 800);
+      const ng = ac.createGain(); ng.gain.value = 0.08;
+      nf.connect(ng); ng.connect(out); noise.start(); soundNodes.push(noise);
+      L.start(); R.start(); soundNodes.push(L, R);
+      break;
+    }
+
+    case 'alpha': {
+      // Alpha 10Hz: 200Hz + 210Hz
+      const L = ac.createOscillator(); L.frequency.value = 200;
+      const R = ac.createOscillator(); R.frequency.value = 210;
+      const gL = ac.createGain(); gL.gain.value = 0.25;
+      const gR = ac.createGain(); gR.gain.value = 0.25;
+      const panL = ac.createStereoPanner ? ac.createStereoPanner() : null;
+      const panR = ac.createStereoPanner ? ac.createStereoPanner() : null;
+      L.connect(gL); R.connect(gR);
+      if (panL && panR) {
+        panL.pan.value = -1; panR.pan.value = 1;
+        gL.connect(panL); panL.connect(out);
+        gR.connect(panR); panR.connect(out);
+      } else { gL.connect(out); gR.connect(out); }
+      const { src: noise, flt: nf } = makeNoiseBuf(ac, 4, 'lowpass', 600);
+      const ng = ac.createGain(); ng.gain.value = 0.07;
+      nf.connect(ng); ng.connect(out); noise.start(); soundNodes.push(noise);
+      L.start(); R.start(); soundNodes.push(L, R);
+      break;
+    }
+
+    case 'theta': {
+      // Theta 6Hz: 200Hz + 206Hz — relaxáció
+      const L = ac.createOscillator(); L.frequency.value = 180;
+      const R = ac.createOscillator(); R.frequency.value = 186;
+      const gL = ac.createGain(); gL.gain.value = 0.22;
+      const gR = ac.createGain(); gR.gain.value = 0.22;
+      const panL = ac.createStereoPanner ? ac.createStereoPanner() : null;
+      const panR = ac.createStereoPanner ? ac.createStereoPanner() : null;
+      L.connect(gL); R.connect(gR);
+      if (panL && panR) {
+        panL.pan.value = -1; panR.pan.value = 1;
+        gL.connect(panL); panL.connect(out);
+        gR.connect(panR); panR.connect(out);
+      } else { gL.connect(out); gR.connect(out); }
+      const { src: noise, flt: nf } = makeNoiseBuf(ac, 5, 'lowpass', 400);
+      const ng = ac.createGain(); ng.gain.value = 0.06;
+      nf.connect(ng); ng.connect(out); noise.start(); soundNodes.push(noise);
+      L.start(); R.start(); soundNodes.push(L, R);
+      break;
+    }
+
+    case 'heartbeat': {
+      // Javított szívdobogás — precíz AudioContext scheduling
+      playHeartbeat_v2(ac, out);
+      break;
+    }
+
+    case 'lofi': {
+      // Lo-fi pulzus: 80 BPM kick + soft chord drone
+      // Kick: 80 BPM = 0.75s interval
+      function scheduleLofi() {
+        const now = ac.currentTime;
+        for (let i = 0; i < 160; i++) {
+          const t = now + i * 0.75;
+          const kick = ac.createOscillator(); kick.type = 'sine';
+          kick.frequency.setValueAtTime(120, t);
+          kick.frequency.exponentialRampToValueAtTime(40, t + 0.15);
+          const kg = ac.createGain();
+          kg.gain.setValueAtTime(0.5, t);
+          kg.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+          kick.connect(kg); kg.connect(out);
+          kick.start(t); kick.stop(t + 0.22); soundNodes.push(kick);
+          // Hihat on offbeat
+          if (i % 2 === 1) {
+            const { src: hat } = makeNoiseBuf(ac, 0.05, 'highpass', 6000);
+            const hg = ac.createGain();
+            hg.gain.setValueAtTime(0.06, t);
+            hg.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+            hat.connect(hg); hg.connect(out);
+            hat.start(t); hat.stop(t + 0.06); soundNodes.push(hat);
+          }
+        }
+      }
+      scheduleLofi();
+      // Chord drone: C major (C3 + E3 + G3) soft
+      [130.8, 164.8, 196].forEach(freq => {
+        const o = ac.createOscillator(); o.type = 'triangle'; o.frequency.value = freq;
+        const g = ac.createGain(); g.gain.value = 0.04;
+        o.connect(g); g.connect(out); o.start(); soundNodes.push(o);
+      });
+      break;
+    }
+
+    case 'white': {
+      // Clean flat white noise
+      const { src, flt } = makeNoiseBuf(ac, 3, 'lowpass', 8000);
+      const g = ac.createGain(); g.gain.value = 0.5;
+      flt.connect(g); g.connect(out); src.start(); soundNodes.push(src);
+      break;
+    }
+
+    // ===== FREKVENCIÁK =====
+
+    case 'hz432': {
+      // 432 Hz pure sine + gentle harmonics
+      [432, 864, 216].forEach((f, i) => {
+        const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+        const g = ac.createGain(); g.gain.value = [0.3, 0.06, 0.04][i];
+        o.connect(g); g.connect(out); o.start(); soundNodes.push(o);
+      });
+      break;
+    }
+
+    case 'hz528': {
+      // 528 Hz + soft chorus (detune ±3 cents)
+      [528, 528, 528, 264].forEach((f, i) => {
+        const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+        if (i === 1) o.detune.value = 3;
+        if (i === 2) o.detune.value = -3;
+        const g = ac.createGain(); g.gain.value = [0.22, 0.1, 0.1, 0.05][i];
+        o.connect(g); g.connect(out); o.start(); soundNodes.push(o);
+      });
+      break;
+    }
+
+    case 'hz40': {
+      // 40 Hz Gamma pulse — proven in Alzheimer research for neural synchrony
+      // Carrier 200Hz, modulated at 40Hz
+      const carrier = ac.createOscillator(); carrier.type = 'sine'; carrier.frequency.value = 200;
+      const modulator = ac.createOscillator(); modulator.type = 'sine'; modulator.frequency.value = 40;
+      const modGain = ac.createGain(); modGain.gain.value = 0.5;
+      const carrierGain = ac.createGain(); carrierGain.gain.value = 0.3;
+      modulator.connect(modGain); modGain.connect(carrierGain.gain);
+      carrier.connect(carrierGain); carrierGain.connect(out);
+      carrier.start(); modulator.start(); soundNodes.push(carrier, modulator);
+      // Low 40Hz pulse too
+      const pulse = ac.createOscillator(); pulse.type = 'sine'; pulse.frequency.value = 40;
+      const pg = ac.createGain(); pg.gain.value = 0.08;
+      pulse.connect(pg); pg.connect(out); pulse.start(); soundNodes.push(pulse);
+      break;
+    }
+
+    case 'hz396': {
+      [396, 792, 198].forEach((f, i) => {
+        const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+        const g = ac.createGain(); g.gain.value = [0.28, 0.05, 0.04][i];
+        o.connect(g); g.connect(out); o.start(); soundNodes.push(o);
+      });
+      break;
+    }
+
+    case 'hz639': {
+      [639, 1278, 319.5].forEach((f, i) => {
+        const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+        const g = ac.createGain(); g.gain.value = [0.25, 0.04, 0.04][i];
+        o.connect(g); g.connect(out); o.start(); soundNodes.push(o);
+      });
+      break;
+    }
+
+    case 'hz741': {
+      [741, 1482, 370.5].forEach((f, i) => {
+        const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+        const g = ac.createGain(); g.gain.value = [0.25, 0.04, 0.03][i];
+        o.connect(g); g.connect(out); o.start(); soundNodes.push(o);
+      });
+      break;
+    }
+  }
+}
+
+function setVolume(v) {
+  soundVolume = v / 100;
+  if(masterGain) masterGain.gain.value = soundVolume;
+  document.getElementById('vol-val').textContent = v + '%';
+}
+
+// ===================== MOOD =====================
+function setMood(mood, emoji, tip) {
+  state.mood = mood;
+  document.querySelectorAll('.mood-emoji-btn').forEach(b => b.classList.remove('sel'));
+  event.currentTarget.classList.add('sel');
+  const tipEl = document.getElementById('mood-tip');
+  tipEl.textContent = tip;
+  tipEl.classList.add('show');
+  addXP(5);
+  showToast('💛 Hangulat mentve! +5 XP');
+  save();
+}
+
+function setEnergy(v) {
+  state.energy = parseInt(v);
+  document.getElementById('energy-val-label').textContent = `${v} / 10`;
+  document.getElementById('energy-fill-bar').style.width = (v * 10) + '%';
+  const tips = [
+    '', 
+    'Pihenj! A tested üzen.', 
+    'Egy kis séta sokat segíthet.', 
+    'Adj magadnak 10 perc szünetet.', 
+    'Ma a könnyebb feladatokat csináld.', 
+    'Átlagos nap — rendben van. Kis lépések.',
+    'Nem rossz! Kezdj egy egyszerű feladattal.', 
+    'Jó energia! Csináld a nehezebb anyagot most.', 
+    'Szuper! Most tanulj a legtöbbet.', 
+    'Maximumon! Ez az ideális tanulási állapot.',
+    'Brutális fókusz! Használd ki! 🔥'
+  ];
+  document.getElementById('energy-tip').textContent = tips[state.energy] || '';
+  save();
+}
+
+function saveDiary() {
+  state.diary = document.getElementById('diary-input').value;
+  addXP(5);
+  showToast('📓 Napló mentve! +5 XP');
+  save();
+}
+
+function renderMoodStreak() {
+  const el = document.getElementById('mood-streak');
+  if(!el) return;
+  el.innerHTML = '';
+  const dayLabels = ['V','H','K','Sz','Cs','P','Szo']; // JS: 0=Sun..6=Sat
+  const huLabels  = ['H','K','Sz','Cs','P','Szo','V'];  // Magyar: 0=Hétfő..6=Vasárnap
+  const jsToday = new Date().getDay(); // 0=Sun..6=Sat
+  // Build last 7 days ending today
+  for(let i = 0; i < 7; i++) {
+    const jsDay = (jsToday - 6 + i + 7) % 7;
+    // Convert JS day (0=Sun) to HU index (0=Mon)
+    const huIdx = jsDay === 0 ? 6 : jsDay - 1;
+    const isToday = (i === 6);
+    const d = document.createElement('div');
+    d.className = 'streak-day' + (isToday ? ' today' : '') + (i < state.streak.length && state.streak[i] ? ' done' : '');
+    d.innerHTML = `<span>${huLabels[huIdx]}</span>`;
+    el.appendChild(d);
+  }
+}
+
+// ===================== XP =====================
+const badges = [
+  { id: 'first', icon: '🌱', name: 'Első lépés', desc: 'Első feladat kész', req: xp => state.pomodoros >= 1 || Object.values(state.checks).some(a => a.some(c=>c.done)) },
+  { id: 'pomo3', icon: '🍅', name: 'Pomo-hős', desc: '3 Pomodoro egymás után', req: () => state.pomodoros >= 3 },
+  { id: 'xp50', icon: '⚡', name: 'Feltöltve', desc: '50+ XP', req: () => state.xp >= 50 },
+  { id: 'xp200', icon: '🏆', name: 'Mester', desc: '200+ XP', req: () => state.xp >= 200 },
+  { id: 'sched', icon: '📋', name: 'Szervezett', desc: 'Órarend kitöltve', req: () => Object.keys(state.sched).length >= 5 },
+  { id: 'diary', icon: '📓', name: 'Napló-vezető', desc: 'Naplóbejegyzés írva', req: () => state.diary.length > 10 },
+];
+
+function addXP(amount) {
+  state.xp += amount;
+  state.pomodoros = (state.pomodoros || 0) + (amount === 10 ? 1 : 0);
+  renderXP();
+  save();
+}
+
+function renderXP() {
+  const el = document.getElementById('xp-total');
+  if(!el) return;
+  el.textContent = state.xp;
+  const level = Math.floor(state.xp / 100) + 1;
+  const progress = (state.xp % 100);
+  document.getElementById('xp-level-label').textContent = `Szint ${level} — ${progress}/100 XP a következő szintig`;
+  document.getElementById('xp-fill').style.width = progress + '%';
+  renderBadges();
+  renderStreak();
+}
+
+function renderBadges() {
+  const grid = document.getElementById('badges-grid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  badges.forEach(b => {
+    const earned = b.req();
+    const card = document.createElement('div');
+    card.className = `card ${earned ? 'card-green' : ''}`;
+    card.style.opacity = earned ? '1' : '0.4';
+    card.innerHTML = `<div style="font-size:26px;margin-bottom:7px;">${b.icon}</div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:3px;">${b.name}</div><div style="font-size:11px;color:var(--text3);">${b.desc}</div>${earned ? '<div style="font-size:11px;color:var(--green);margin-top:5px;font-weight:600;">✓ Megszerezte!</div>' : ''}`;
+    grid.appendChild(card);
+  });
+}
+
+function renderStreak() {
+  const el = document.getElementById('streak-row');
+  if(!el) return;
+  el.innerHTML = '';
+  const huLabels = ['H','K','Sz','Cs','P','Szo','V']; // 0=Hétfő..6=Vasárnap
+  const jsToday = new Date().getDay(); // 0=Sun..6=Sat
+  for(let i = 0; i < 7; i++) {
+    const jsDay = (jsToday - 6 + i + 7) % 7;
+    const huIdx = jsDay === 0 ? 6 : jsDay - 1;
+    const isToday = (i === 6);
+    const d = document.createElement('div');
+    d.className = 'streak-day' + (isToday ? ' today' : '') + (i < (state.streak||[]).length && state.streak[i] ? ' done' : '');
+    d.innerHTML = `<span style="font-size:9px;">${huLabels[huIdx]}</span>`;
+    el.appendChild(d);
+  }
+}
+
+// ===================== CONFETTI =====================
+function spawnConfetti() {
+  const emojis = ['🎉','⭐','✨','🎊','💫','🔥','⚡'];
+  for(let i = 0; i < 8; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.left = (20 + Math.random() * 60) + 'vw';
+      el.style.top = (20 + Math.random() * 30) + 'vh';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 900);
+    }, i * 80);
+  }
+}
+
+// ===================== MODAL =====================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  setTimeout(() => {
+    const inp = document.querySelector(`#${id} input`);
+    if(inp) inp.focus();
+  }, 100);
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+document.querySelectorAll('.modal-ov').forEach(ov => {
+  ov.addEventListener('click', e => { if(e.target === ov) ov.classList.remove('open'); });
+});
+
+// ===================== TOAST =====================
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===================== DEFAULTS =====================
+function loadDefaults() {
+  if(state.blocks.reggel.length === 0) {
+    state.blocks.reggel = [
+      { name: 'Ébresztő + felkelés', time: '7:00', dur: '10 perc', desc: 'Ne nyomj szundira!', type: 'tb-sleep', done: false },
+      { name: 'Reggeli + ivás', time: '7:15', dur: '15 perc', desc: 'Agynak kell az üzemanyag', type: 'tb-break', done: false },
+      { name: 'Felkészülés iskolára', time: '7:30', dur: '15 perc', desc: 'Táska, ruha, kész', type: 'tb-school', done: false },
+    ];
+  }
+  if(state.blocks.iskola.length === 0) {
+    state.blocks.iskola = [
+      { name: 'Iskola', time: '8:00', dur: '6 óra', desc: 'Első tanítási nap', type: 'tb-school', done: false },
+    ];
+  }
+  if(state.blocks.delutan.length === 0) {
+    state.blocks.delutan = [
+      { name: 'Hazaérés + ebéd', time: '14:00', dur: '30 perc', desc: 'Először enni, aztán tanulni', type: 'tb-break', done: false },
+      { name: 'Tanulás — 1. blokk', time: '14:30', dur: '25 perc', desc: 'Pomodoro', type: 'tb-study', done: false },
+      { name: 'Szünet', time: '14:55', dur: '5 perc', desc: 'Felállni, mozogni!', type: 'tb-break', done: false },
+      { name: 'Tanulás — 2. blokk', time: '15:00', dur: '25 perc', desc: 'Pomodoro', type: 'tb-study', done: false },
+      { name: 'Szabadidő', time: '15:30', dur: '60 perc', desc: 'Teljesen jogos pihenő', type: 'tb-free', done: false },
+    ];
+  }
+  if(state.blocks.este.length === 0) {
+    state.blocks.este = [
+      { name: 'Vacsora', time: '18:00', dur: '30 perc', desc: '', type: 'tb-break', done: false },
+      { name: 'Lefekvés előkészület', time: '21:00', dur: '30 perc', desc: 'Telefon le, olvasás vagy zene', type: 'tb-sleep', done: false },
+      { name: 'Aludni!', time: '21:30', dur: '8-9 óra', desc: '8 óra alvás = jobb agy', type: 'tb-sleep', done: false },
+    ];
+  }
+  if(state.checks.indulas.length === 0) {
+    state.checks.indulas = [
+      { text: '📚 Tankönyvek bepakolva', done: false },
+      { text: '📓 Füzetek bepakolva', done: false },
+      { text: '🍱 Tízórai', done: false },
+      { text: '💧 Kulacs vízzel', done: false },
+      { text: '🏠 Kulcs megvan', done: false },
+      { text: '📱 Telefon feltöltve', done: false },
+    ];
+  }
+  if(state.checks.hazaer.length === 0) {
+    state.checks.hazaer = [
+      { text: '🎒 Hátizsák kicsomagolva', done: false },
+      { text: '📋 Holnapi feladatok megnézve', done: false },
+      { text: '📚 Tanulás elkezdve', done: false },
+    ];
+  }
+  save();
+}
+
+// ===================== A/B HÉT + ÓRAREND =====================
+function setWeek(w, btn) {
+  state.currentWeek = w;
+  document.querySelectorAll('.week-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('week-current-label').textContent = `Jelenlegi: ${w} hét`;
+  renderSched();
+  save();
+}
+
+// renderSched is defined below with A/B week support built-in
+
+// ===================== VIZSGÁK =====================
+function renderExams() {
+  const el = document.getElementById('exam-list');
+  if(!el) return;
+  el.innerHTML = '';
+  const today = new Date(); today.setHours(0,0,0,0);
+  (state.exams || []).sort((a,b) => new Date(a.date) - new Date(b.date)).forEach((ex, i) => {
+    const d = new Date(ex.date); d.setHours(0,0,0,0);
+    const days = Math.round((d - today) / 86400000);
+    const card = document.createElement('div');
+    card.className = 'exam-card';
+    let dayClass = 'ok', dayLabel = days + ' nap';
+    if(days < 0) { dayClass = ''; dayLabel = 'Elmúlt'; }
+    else if(days === 0) { dayClass = 'urgent'; dayLabel = 'Ma!'; }
+    else if(days <= 3) { dayClass = 'urgent'; }
+    else if(days <= 7) { dayClass = 'soon'; }
+    card.innerHTML = `
+      <div class="exam-days ${dayClass}">${dayLabel}</div>
+      <div class="exam-body">
+        <div class="exam-name">${ex.subject} — ${ex.name}</div>
+        <div class="exam-date">📅 ${ex.date}${ex.note ? ' · ' + ex.note : ''}</div>
+      </div>
+      <button class="exam-del" onclick="delExam(${i})">🗑</button>`;
+    el.appendChild(card);
+  });
+}
+
+function openAddExam() {
+  document.getElementById('exam-subject-in').value = '';
+  document.getElementById('exam-name-in').value = '';
+  document.getElementById('exam-date-in').value = '';
+  document.getElementById('exam-note-in').value = '';
+  openModal('modal-exam');
+}
+
+function saveExam() {
+  const sub = document.getElementById('exam-subject-in').value.trim();
+  const name = document.getElementById('exam-name-in').value.trim();
+  const date = document.getElementById('exam-date-in').value;
+  if(!sub || !date) return;
+  if(!state.exams) state.exams = [];
+  state.exams.push({ subject: sub, name: name || 'Dolgozat', date, note: document.getElementById('exam-note-in').value.trim() });
+  save(); renderExams(); closeModal('modal-exam');
+  showToast('📅 Vizsga hozzáadva!');
+}
+
+function delExam(i) {
+  state.exams.splice(i, 1);
+  save(); renderExams();
+}
+
+// ===================== SPORT & ZENE =====================
+const sportQuotes = [
+  { t: "A bajnok az, aki elindult, amikor mindenki más feladta.", s: "— Kitartás" },
+  { t: "Minden edzés közelebb visz a célodhoz — még a rossz napok is.", s: "— Fejlődés" },
+  { t: "Nem az számít, hol tartasz most. Az számít, hogy holnap jobb leszel.", s: "— Növekedési szemlélet" },
+  { t: "A fájdalom elmúlik. A büszkeség örökre megmarad.", s: "— Sportbölcsesség" },
+  { t: "Az álom nem altat. Az álom feléleszt.", s: "— Motiváció" },
+];
+const musicQuotes = [
+  { t: "Minden mester volt valaha tanuló. Minden profi volt egyszer kezdő.", s: "— Zenetanulás" },
+  { t: "A zene a szív nyelve — minden gyakorlat egy mondat ebből a nyelvből.", s: "— Inspiráció" },
+  { t: "Nem a tehetség visz előre, hanem a napi 30 perc.", s: "— Következetesség" },
+  { t: "Ha elnyomta a hangot a közönség, az azt jelenti: figyelnek.", s: "— Fellépés" },
+  { t: "Hibázz bátran — ebből épül a mesterség.", s: "— Fejlődés" },
+];
+
+let sportQI = 0, musicQI = 0;
+function nextSportQuote() { sportQI = (sportQI+1) % sportQuotes.length; renderSportQuotes(); }
+function nextMusicQuote() { musicQI = (musicQI+1) % musicQuotes.length; renderSportQuotes(); }
+function renderSportQuotes() {
+  const sq = sportQuotes[sportQI];
+  const mq = musicQuotes[musicQI];
+  const st = document.getElementById('sport-quote-text');
+  const ss = document.getElementById('sport-quote-sub');
+  const mt = document.getElementById('music-quote-text');
+  const ms = document.getElementById('music-quote-sub');
+  if(st) st.textContent = sq.t;
+  if(ss) ss.textContent = sq.s;
+  if(mt) mt.textContent = mq.t;
+  if(ms) ms.textContent = mq.s;
+}
+
+function setSportTab(tab, btn) {
+  document.getElementById('sport-tab-sport').style.display = tab === 'sport' ? 'block' : 'none';
+  document.getElementById('sport-tab-zene').style.display = tab === 'zene' ? 'block' : 'none';
+  document.querySelectorAll('#st-sport,#st-zene').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function renderResults(type) {
+  const el = document.getElementById(type + '-results-list');
+  if(!el) return;
+  el.innerHTML = '';
+  const medals = ['🥇','🥈','🥉','🏅','⭐','🎖'];
+  (state[type + 'Results'] || []).forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'result-card';
+    card.innerHTML = `
+      <div class="result-medal">${medals[i % medals.length]}</div>
+      <div class="result-body">
+        <div class="result-name">${r.name}</div>
+        <div class="result-date">📅 ${r.date}${r.note ? ' — ' + r.note : ''}</div>
+      </div>
+      <button class="result-del" onclick="delResult('${type}',${i})">🗑</button>`;
+    el.appendChild(card);
+  });
+}
+
+function openAddResult(type) {
+  document.getElementById('result-type-in').value = type;
+  document.getElementById('result-name-in').value = '';
+  document.getElementById('result-date-in').value = '';
+  document.getElementById('result-note-in').value = '';
+  openModal('modal-result');
+}
+
+function saveResult() {
+  const type = document.getElementById('result-type-in').value;
+  const name = document.getElementById('result-name-in').value.trim();
+  const date = document.getElementById('result-date-in').value;
+  if(!name) return;
+  if(!state[type + 'Results']) state[type + 'Results'] = [];
+  state[type + 'Results'].push({ name, date, note: document.getElementById('result-note-in').value.trim() });
+  addXP(20);
+  showToast('🏆 Eredmény rögzítve! +20 XP');
+  spawnConfetti();
+  save(); renderResults(type); closeModal('modal-result');
+}
+
+function delResult(type, i) {
+  state[type + 'Results'].splice(i, 1);
+  save(); renderResults(type);
+}
+
+// ===================== NAPLÓ EXPORT =====================
+function exportDiary() {
+  const text = document.getElementById('diary-input').value;
+  if(!text.trim()) { showToast('📓 Előbb írj valamit!'); return; }
+  const d = new Date();
+  const full = `📓 NAPLÓ — ${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}\n\n${text}`;
+  if(navigator.share) {
+    navigator.share({ title: 'Naplóbejegyzés', text: full }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(full).then(() => showToast('📋 Vágólapra másolva!')).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = full; document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta); showToast('📋 Másolva!');
+    });
+  }
+}
+
+// ===================== ALVÁS KÖVETÉS =====================
+function saveSleep() {
+  const st = document.getElementById('sleep-time').value;
+  const wt = document.getElementById('wake-time').value;
+  if(!st || !wt) return;
+  const [sh,sm] = st.split(':').map(Number);
+  const [wh,wm] = wt.split(':').map(Number);
+  let mins = (wh*60+wm) - (sh*60+sm);
+  if(mins < 0) mins += 24*60;
+  const h = Math.floor(mins/60), m = mins%60;
+  state.lastSleep = { sleep: st, wake: wt, hours: h, mins: m };
+  save();
+  showToast(`😴 ${h} óra ${m} perc alvás mentve!`);
+  addXP(3);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const sl = document.getElementById('sleep-time');
+  const wl = document.getElementById('wake-time');
+  if(sl) { sl.addEventListener('change', updateSleepDuration); wl.addEventListener('change', updateSleepDuration); }
+});
+
+function updateSleepDuration() {
+  const st = document.getElementById('sleep-time').value;
+  const wt = document.getElementById('wake-time').value;
+  if(!st || !wt) return;
+  const [sh,sm] = st.split(':').map(Number);
+  const [wh,wm] = wt.split(':').map(Number);
+  let mins = (wh*60+wm) - (sh*60+sm);
+  if(mins < 0) mins += 24*60;
+  const h = Math.floor(mins/60), m = mins%60;
+  const el = document.getElementById('sleep-duration');
+  if(el) { el.textContent = `${h} óra ${m > 0 ? m + ' perc' : ''}`; el.style.color = h >= 8 ? 'var(--green)' : h >= 6 ? 'var(--yellow)' : 'var(--red)'; }
+}
+
+// ===================== SZÜLŐI ÖSSZEFOGLALÓ =====================
+function generateSummary() {
+  const d = new Date();
+  const done_tasks = Object.values(state.blocks).flat().filter(b=>b.done).length;
+  const total_tasks = Object.values(state.blocks).flat().length;
+  const done_checks = Object.values(state.checks).flat().filter(c=>c.done).length;
+  const total_checks = Object.values(state.checks).flat().length;
+  const sleep = state.lastSleep ? `${state.lastSleep.hours} óra` : 'nem rögzített';
+  const mood = state.mood || 'nem rögzített';
+  const xp = state.xp || 0;
+  const pomos = state.pomodoros || 0;
+
+  const text = `📊 Heti összefoglaló — ${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()}
+
+✅ Elvégzett feladatok: ${done_tasks} / ${total_tasks}
+📋 Kipipált teendők: ${done_checks} / ${total_checks}
+⏱ Pomodoro tanulási blokkok: ${pomos}
+😴 Utolsó rögzített alvás: ${sleep}
+💛 Mai hangulat: ${mood}
+⚡ Összesített XP: ${xp} pont (Szint ${Math.floor(xp/100)+1})
+
+${(state.sportResults||[]).length > 0 ? '🏅 Sport eredmények: ' + state.sportResults.map(r=>r.name).join(', ') + '\n' : ''}${(state.musicResults||[]).length > 0 ? '🎵 Zene eredmények: ' + state.musicResults.map(r=>r.name).join(', ') + '\n' : ''}
+Generálva a NAPLÓ app-pal`;
+
+  const out = document.getElementById('summary-output');
+  out.textContent = text;
+  out.style.display = 'block';
+
+  if(navigator.share) {
+    navigator.share({ title: 'Heti összefoglaló', text }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(text).then(() => showToast('📋 Összefoglaló másolva!')).catch(()=>{});
+  }
+}
+
+// ===================== MÓDSZER KÁRTYÁK =====================
+function toggleMethod(id) {
+  const body = document.getElementById('body-' + id);
+  const arr = document.getElementById('arr-' + id);
+  if(!body) return;
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if(arr) arr.classList.toggle('open', !open);
+}
+
+
+
+// ============================================================
+// FIX ELFOGLALTSÁGOK
+// ============================================================
+const DAY_NAMES = ['Hétfő','Kedd','Szerda','Csütörtök','Péntek','Szombat','Vasárnap'];
+const DAY_SHORT = ['H','K','Sze','Cs','P','Szo','V'];
+const TYPE_ICONS = { sport:'🏃', music:'🎵', other:'📌' };
+
+function renderFixedActivities() {
+  const el = document.getElementById('fixed-activities-list');
+  if(!el) return;
+  el.innerHTML = '';
+  (state.fixedActivities || []).forEach((fa, i) => {
+    const days = (fa.days||[]).map(d=>DAY_SHORT[d]).join(', ');
+    const card = document.createElement('div');
+    card.className = 'fix-act-card';
+    card.innerHTML = `
+      <span style="font-size:18px">${TYPE_ICONS[fa.type]||'📌'}</span>
+      <div style="flex:1">
+        <div style="font-weight:600;color:var(--text);font-size:13px">${fa.name}</div>
+        <div class="fix-act-days">${fa.time || ''} · ${days}</div>
+      </div>
+      <button class="fix-act-del" onclick="openEditFixedActivity(${i})">✏️</button>
+      <button class="fix-act-del" onclick="delFixedActivityIdx(${i})" style="opacity:1;color:var(--red)">🗑</button>`;
+    el.appendChild(card);
+  });
+}
+
+function openAddFixedActivity() {
+  document.getElementById('fa-name').value = '';
+  document.getElementById('fa-time').value = '';
+  document.getElementById('fa-type').value = 'sport';
+  document.getElementById('fa-edit-idx').value = -1;
+  document.getElementById('fa-del-btn').style.display = 'none';
+  document.querySelectorAll('.day-pick-btn').forEach(b=>b.classList.remove('sel'));
+  openModal('modal-fixed-act');
+}
+
+function openEditFixedActivity(i) {
+  const fa = (state.fixedActivities||[])[i];
+  if(!fa) return;
+  document.getElementById('fa-name').value = fa.name;
+  document.getElementById('fa-time').value = fa.time||'';
+  document.getElementById('fa-type').value = fa.type||'sport';
+  document.getElementById('fa-edit-idx').value = i;
+  document.getElementById('fa-del-btn').style.display = 'inline-flex';
+  document.querySelectorAll('.day-pick-btn').forEach(b=>{
+    b.classList.toggle('sel', (fa.days||[]).includes(parseInt(b.dataset.day)));
+  });
+  openModal('modal-fixed-act');
+}
+
+function toggleDayPick(btn) { btn.classList.toggle('sel'); }
+
+function saveFixedActivity() {
+  const name = document.getElementById('fa-name').value.trim();
+  if(!name) return;
+  const days = [...document.querySelectorAll('.day-pick-btn.sel')].map(b=>parseInt(b.dataset.day));
+  const fa = {
+    name,
+    time: document.getElementById('fa-time').value.trim(),
+    type: document.getElementById('fa-type').value,
+    days
+  };
+  if(!state.fixedActivities) state.fixedActivities = [];
+  const idx = parseInt(document.getElementById('fa-edit-idx').value);
+  if(idx === -1) state.fixedActivities.push(fa);
+  else state.fixedActivities[idx] = fa;
+  save(); renderFixedActivities(); closeModal('modal-fixed-act');
+  generateTomorrowSuggest();
+  showToast('📌 Elfoglaltság mentve!');
+}
+
+function delFixedActivity() {
+  const idx = parseInt(document.getElementById('fa-edit-idx').value);
+  if(idx >= 0) { state.fixedActivities.splice(idx,1); save(); renderFixedActivities(); closeModal('modal-fixed-act'); }
+}
+function delFixedActivityIdx(i) {
+  state.fixedActivities.splice(i,1); save(); renderFixedActivities();
+}
+
+// ============================================================
+// NAPI TERV INTEGRÁCIÓ — Órarend → Holnap javaslat
+// ============================================================
+function getTodayDayIdx() {
+  // 0=Mon, 1=Tue ... 4=Fri, 5=Sat, 6=Sun
+  const jsDay = new Date().getDay(); // 0=Sun
+  return jsDay === 0 ? 6 : jsDay - 1;
+}
+
+function getTomorrowDayIdx() {
+  return (getTodayDayIdx() + 1) % 7;
+}
+
+function getSubjectsForDay(dayIdx) {
+  // Get subjects from schedule for given day (0=Mon..4=Fri)
+  const week = state.currentWeek || 'A';
+  const prefix = `w${week}_`;
+  const subjects = [];
+  const schedTimes = ['7:00','7:45','8:35','9:25','10:20','11:10','12:00','12:45','13:35'];
+  if(dayIdx > 4) return []; // weekend
+  schedTimes.forEach((_, ti) => {
+    const key = prefix + `${dayIdx}_${ti}`;
+    if(state.sched && state.sched[key]) {
+      const subj = state.sched[key].subject;
+      if(subj && !subjects.includes(subj)) subjects.push(subj);
+    }
+  });
+  return subjects;
+}
+
+function getFixedActivitiesForDay(dayIdx) {
+  return (state.fixedActivities || []).filter(fa => (fa.days||[]).includes(dayIdx));
+}
+
+function generateTomorrowSuggest() {
+  const tomorrowIdx = getTomorrowDayIdx();
+  const subjects = getSubjectsForDay(tomorrowIdx);
+  const activities = getFixedActivitiesForDay(tomorrowIdx);
+  const card = document.getElementById('tomorrow-suggest-card');
+  const body = document.getElementById('tomorrow-suggest-body');
+  if(!card || !body) return;
+
+  if(subjects.length === 0 && activities.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+
+  const tomorrowName = DAY_NAMES[tomorrowIdx] || 'Holnap';
+  let html = `<div style="font-weight:600;color:var(--accent2);margin-bottom:8px;">📅 ${tomorrowName}</div>`;
+
+  if(activities.length > 0) {
+    html += '<div style="margin-bottom:8px;">';
+    activities.forEach(fa => {
+      html += `<div class="suggest-item"><span class="suggest-dot" style="background:var(--orange)"></span><span>${TYPE_ICONS[fa.type]} <strong>${fa.name}</strong>${fa.time ? ' — ' + fa.time : ''}</span></div>`;
+    });
+    html += '</div>';
+  }
+
+  if(subjects.length > 0) {
+    html += '<div style="font-size:11px;color:var(--text3);margin-bottom:6px;">📚 Holnapi órák → ma este érdemes átnézni:</div>';
+    subjects.forEach(s => {
+      html += `<div class="suggest-item"><span class="suggest-dot" style="background:var(--accent)"></span><span>${s}</span></div>`;
+    });
+  }
+
+  body.innerHTML = html;
+  // Store for accept
+  state._tomorrowSuggest = { subjects, activities, dayName: tomorrowName };
+  card.style.display = 'block';
+}
+
+function acceptTomorrowPlan() {
+  const sugg = state._tomorrowSuggest;
+  if(!sugg) return;
+
+  // Add fixed activities to delutan block
+  sugg.activities.forEach(fa => {
+    const exists = (state.blocks.delutan||[]).some(b => b.name === fa.name);
+    if(!exists) {
+      state.blocks.delutan.push({
+        name: fa.name,
+        time: fa.time || '',
+        dur: '',
+        desc: `Fix elfoglaltság — ${sugg.dayName}`,
+        type: fa.type === 'sport' ? 'tb-sport' : fa.type === 'music' ? 'tb-school' : 'tb-school',
+        done: false,
+        fixed: true
+      });
+    }
+  });
+
+  // Add study suggestions to este block
+  sugg.subjects.forEach(s => {
+    const exists = (state.blocks.este||[]).some(b => b.name.includes(s));
+    if(!exists) {
+      state.blocks.este.push({
+        name: `Átnézés: ${s}`,
+        time: '',
+        dur: '20-30 perc',
+        desc: `Holnap ${s} óra van`,
+        type: 'tb-study',
+        done: false
+      });
+    }
+  });
+
+  save(); renderBlocks();
+  document.getElementById('tomorrow-suggest-card').style.display = 'none';
+  showToast('✅ Holnapi terv berakva!');
+  spawnConfetti();
+}
+
+function dismissTomorrowSuggest() {
+  document.getElementById('tomorrow-suggest-card').style.display = 'none';
+}
+
+// ============================================================
+// HETI ELŐREJELZÉS
+// ============================================================
+function generateWeeklyForecast() {
+  const banner = document.getElementById('weekly-forecast-banner');
+  const content = document.getElementById('weekly-forecast-content');
+  if(!banner || !content) return;
+
+  let html = '';
+  for(let d = 0; d < 5; d++) {
+    const subjects = getSubjectsForDay(d);
+    const activities = getFixedActivitiesForDay(d);
+    const exams = (state.exams||[]).filter(ex => {
+      const exDate = new Date(ex.date);
+      const today = new Date(); today.setHours(0,0,0,0);
+      const dayDate = new Date(today);
+      dayDate.setDate(today.getDate() + ((d - getTodayDayIdx() + 7) % 7));
+      return exDate.toDateString() === dayDate.toDateString();
+    });
+
+    if(subjects.length === 0 && activities.length === 0) continue;
+
+    html += `<div style="margin-bottom:8px;padding:8px 10px;background:var(--bg3);border-radius:8px;">`;
+    html += `<div style="font-weight:600;color:var(--text);font-size:12px;margin-bottom:4px;">${DAY_NAMES[d]}</div>`;
+    if(subjects.length) html += `<div style="color:var(--text3);font-size:11px;">📚 ${subjects.join(', ')}</div>`;
+    if(activities.length) html += `<div style="color:var(--orange);font-size:11px;">${activities.map(a=>TYPE_ICONS[a.type]+' '+a.name+(a.time?' ('+a.time+')':'')).join(' · ')}</div>`;
+    if(exams.length) html += `<div style="color:var(--red);font-size:11px;font-weight:600;">⚠️ ${exams.map(e=>e.subject+' '+e.name).join(', ')}</div>`;
+    html += '</div>';
+  }
+
+  if(html) {
+    content.innerHTML = html;
+    banner.style.display = 'block';
+  }
+}
+
+// ============================================================
+// SZÜNETCSENGŐ + VÍZEMLÉKEZTETŐ
+// ============================================================
+let breakBellTimer = null;
+let waterTimer = null;
+
+function startBreakBell() {
+  clearInterval(breakBellTimer);
+  const mins = parseInt(document.getElementById('break-bell-interval')?.value || 0);
+  if(mins === 0) return;
+  breakBellTimer = setInterval(() => {
+    playBreakBell();
+    showToast('🔔 Szünet ideje! ' + mins + ' perc telt el.');
+  }, mins * 60 * 1000);
+}
+
+function startWaterReminder() {
+  clearInterval(waterTimer);
+  const mins = parseInt(document.getElementById('water-interval')?.value || 0);
+  if(mins === 0) return;
+  waterTimer = setInterval(() => {
+    playWaterSound();
+    showToast('💧 Igyál egy pohár vizet!');
+  }, mins * 60 * 1000);
+}
+
+function playBreakBell() {
+  try {
+    const ac = getAC(); if(ac.state==='suspended') ac.resume();
+    // Church bell-like sound
+    [523, 659, 784, 1047].forEach((f,i) => {
+      const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+      const g = ac.createGain();
+      const t = ac.currentTime + i*0.3;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.3, t+0.05);
+      g.gain.exponentialRampToValueAtTime(0.001, t+1.2);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t); o.stop(t+1.3);
+    });
+  } catch(e){}
+}
+
+function playWaterSound() {
+  try {
+    const ac = getAC(); if(ac.state==='suspended') ac.resume();
+    // Water drip sounds
+    [1200, 900, 1500].forEach((f,i) => {
+      const o = ac.createOscillator(); o.type = 'sine'; o.frequency.value = f;
+      const g = ac.createGain();
+      const t = ac.currentTime + i*0.15;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.2, t+0.02);
+      g.gain.exponentialRampToValueAtTime(0.001, t+0.25);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t); o.stop(t+0.28);
+    });
+  } catch(e){}
+}
+
+// pomoCTRL timer integration is handled inline below
+
+// ============================================================
+// JAVÍTOTT SZÍVDOBOGÁS
+// ============================================================
+function playHeartbeat_v2(ac, out) {
+  // Use precise scheduling — 60 BPM = 1 beat/sec
+  // Pre-schedule 200 beats so it runs for ~3 mins
+  const startTime = ac.currentTime + 0.1;
+  for(let i = 0; i < 200; i++) {
+    const beatTime = startTime + i * 1.0;
+    scheduleHeartbeatAt(ac, out, beatTime);
+  }
+}
+
+function scheduleHeartbeatAt(ac, out, t) {
+  // Lub
+  const lub = ac.createOscillator();
+  lub.type = 'sine';
+  lub.frequency.setValueAtTime(70, t);
+  lub.frequency.exponentialRampToValueAtTime(40, t + 0.12);
+  const lubG = ac.createGain();
+  lubG.gain.setValueAtTime(0, t);
+  lubG.gain.linearRampToValueAtTime(0.5, t + 0.015);
+  lubG.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+  // Low freq body
+  const body = ac.createOscillator();
+  body.type = 'sine';
+  body.frequency.value = 100;
+  const bodyG = ac.createGain();
+  bodyG.gain.setValueAtTime(0, t);
+  bodyG.gain.linearRampToValueAtTime(0.2, t + 0.01);
+  bodyG.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+
+  lub.connect(lubG); lubG.connect(out);
+  body.connect(bodyG); bodyG.connect(out);
+  lub.start(t); lub.stop(t + 0.22);
+  body.start(t); body.stop(t + 0.15);
+
+  // Dub (0.28s after)
+  const t2 = t + 0.28;
+  const dub = ac.createOscillator();
+  dub.type = 'sine';
+  dub.frequency.setValueAtTime(60, t2);
+  dub.frequency.exponentialRampToValueAtTime(35, t2 + 0.1);
+  const dubG = ac.createGain();
+  dubG.gain.setValueAtTime(0, t2);
+  dubG.gain.linearRampToValueAtTime(0.35, t2 + 0.012);
+  dubG.gain.exponentialRampToValueAtTime(0.001, t2 + 0.15);
+  dub.connect(dubG); dubG.connect(out);
+  dub.start(t2); dub.stop(t2 + 0.18);
+}
+
+// ============================================================
+// FLASHCARDS
+// ============================================================
+let fcIndex = 0;
+let fcStudyCards = [];
+
+function renderFlashcardList() {
+  const list = document.getElementById('flashcard-list');
+  const startBtn = document.getElementById('fc-start-btn');
+  const emptyEl = document.getElementById('flashcard-empty');
+  if(!list) return;
+  const cards = state.flashcards || [];
+  list.innerHTML = '';
+  cards.forEach((fc, i) => {
+    const div = document.createElement('div');
+    div.className = 'fc-item' + (fc.known ? ' known' : '');
+    div.innerHTML = `
+      <div class="fc-item-q"><strong>${fc.q}</strong> <span style="color:var(--text3)">→ ${fc.a.substring(0,40)}${fc.a.length>40?'...':''}</span></div>
+      ${fc.subject ? `<span style="font-size:10px;color:var(--accent2);background:rgba(124,111,247,.12);padding:2px 7px;border-radius:10px;">${fc.subject}</span>` : ''}
+      ${fc.known ? '<span style="font-size:10px;color:var(--green)">✓</span>' : ''}
+      <button class="fc-item-del" onclick="openEditFlashcard(${i})">✏️</button>`;
+    list.appendChild(div);
+  });
+  if(startBtn) startBtn.style.display = cards.length > 0 ? 'inline-flex' : 'none';
+  if(emptyEl) emptyEl.style.display = cards.length === 0 ? 'block' : 'none';
+}
+
+function openAddFlashcard() {
+  document.getElementById('fc-question').value = '';
+  document.getElementById('fc-answer').value = '';
+  document.getElementById('fc-subject').value = '';
+  document.getElementById('fc-edit-idx').value = -1;
+  document.getElementById('fc-del-btn').style.display = 'none';
+  openModal('modal-flashcard');
+}
+
+function openEditFlashcard(i) {
+  const fc = (state.flashcards||[])[i];
+  if(!fc) return;
+  document.getElementById('fc-question').value = fc.q;
+  document.getElementById('fc-answer').value = fc.a;
+  document.getElementById('fc-subject').value = fc.subject||'';
+  document.getElementById('fc-edit-idx').value = i;
+  document.getElementById('fc-del-btn').style.display = 'inline-flex';
+  openModal('modal-flashcard');
+}
+
+function saveFlashcard() {
+  const q = document.getElementById('fc-question').value.trim();
+  const a = document.getElementById('fc-answer').value.trim();
+  if(!q || !a) return;
+  if(!state.flashcards) state.flashcards = [];
+  const idx = parseInt(document.getElementById('fc-edit-idx').value);
+  const fc = { q, a, subject: document.getElementById('fc-subject').value.trim(), known: false };
+  if(idx === -1) state.flashcards.push(fc);
+  else state.flashcards[idx] = fc;
+  save(); renderFlashcardList(); closeModal('modal-flashcard');
+  showToast('🃏 Flashcard mentve!');
+}
+
+function delFlashcard() {
+  const idx = parseInt(document.getElementById('fc-edit-idx').value);
+  if(idx >= 0) { state.flashcards.splice(idx,1); save(); renderFlashcardList(); closeModal('modal-flashcard'); }
+}
+
+function startFlashcardStudy() {
+  fcStudyCards = (state.flashcards||[]).map((fc,i)=>({...fc, origIdx:i}));
+  // Shuffle
+  for(let i=fcStudyCards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcStudyCards[i],fcStudyCards[j]]=[fcStudyCards[j],fcStudyCards[i]];}
+  fcIndex = 0;
+  document.getElementById('flashcard-display').style.display = 'block';
+  document.getElementById('flashcard-empty').style.display = 'none';
+  showFCCard();
+}
+
+function showFCCard() {
+  if(fcStudyCards.length === 0) return;
+  const fc = fcStudyCards[fcIndex];
+  const box = document.getElementById('fc-box');
+  const front = document.getElementById('fc-front');
+  const back = document.getElementById('fc-back');
+  front.textContent = fc.q;
+  back.textContent = fc.a;
+  back.style.display = 'none';
+  front.style.display = 'block';
+  // hint
+  if(!box.querySelector('.fc-tap-hint')) {
+    const hint = document.createElement('div');
+    hint.className = 'fc-tap-hint';
+    hint.textContent = 'kattints a válaszhoz';
+    box.appendChild(hint);
+  }
+  document.getElementById('fc-counter').textContent = `${fcIndex+1} / ${fcStudyCards.length}`;
+}
+
+function flipCard() {
+  const front = document.getElementById('fc-front');
+  const back = document.getElementById('fc-back');
+  if(front.style.display !== 'none') {
+    front.style.display = 'none';
+    back.style.display = 'block';
+    const hint = document.querySelector('.fc-tap-hint');
+    if(hint) hint.textContent = '✅ tudom  /  😕 nem megy';
+  }
+}
+
+function fcNext() { fcIndex = (fcIndex+1) % fcStudyCards.length; showFCCard(); }
+function fcPrev() { fcIndex = (fcIndex-1+fcStudyCards.length) % fcStudyCards.length; showFCCard(); }
+
+function fcMark(known) {
+  const fc = fcStudyCards[fcIndex];
+  if(state.flashcards && fc.origIdx !== undefined) {
+    state.flashcards[fc.origIdx].known = known;
+    save();
+  }
+  if(known) { showToast('✅ Ezt tudod!'); addXP(2); }
+  else showToast('📖 Még ismételd át!');
+  fcNext();
+}
+
+// ===================== INIT =====================
+function init() {
+  loadDefaults();
+  renderDate();
+  renderQuote();
+  renderBlocks();
+  renderChecks();
+  renderSched();
+  renderPomoSessions();
+  renderPomoTimer();
+  renderXP();
+  renderMoodStreak();
+  renderStreak();
+
+  // restore energy slider
+  const slider = document.getElementById('energy-slider');
+  if(slider) {
+    slider.value = state.energy;
+    setEnergy(state.energy);
+  }
+
+  renderExams();
+  renderResults('sport');
+  renderResults('music');
+  renderSportQuotes();
+  // restore sleep times
+  if(state.lastSleep) {
+    const sl = document.getElementById('sleep-time');
+    const wl = document.getElementById('wake-time');
+    if(sl) sl.value = state.lastSleep.sleep;
+    if(wl) wl.value = state.lastSleep.wake;
+    updateSleepDuration();
+  }
+  // set week tab
+  if(state.currentWeek === 'B') {
+    const btnB = document.getElementById('tab-weekB');
+    if(btnB) { document.querySelectorAll('.week-tab').forEach(b=>b.classList.remove('active')); btnB.classList.add('active'); }
+  }
+  renderFixedActivities();
+  renderFlashcardList();
+  generateTomorrowSuggest();
+  // Heti előrejelzés csak hétfőn (vagy ha van adat)
+  const todayJS = new Date().getDay();
+  if(todayJS === 1 || Object.keys(state.sched||{}).length > 0) generateWeeklyForecast();
+  // restore diary
+  if(state.diary) {
+    const d = document.getElementById('diary-input');
+    if(d) d.value = state.diary;
+  }
+}
+
+init();
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(r => console.log('SW OK:', r.scope))
+      .catch(e => console.log('SW hiba:', e));
+  });
+}
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  setTimeout(() => {
+    if (!deferredPrompt) return;
+    const b = document.createElement('div');
+    b.id = 'install-banner';
+    b.style.cssText = 'position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#1A1A24;border:1px solid #7C6FF7;color:#A89BFF;padding:10px 18px;border-radius:24px;font-size:12px;font-weight:500;z-index:400;display:flex;align-items:center;gap:10px;box-shadow:0 8px 24px rgba(0,0,0,.4);white-space:nowrap';
+    b.innerHTML = '📱 Telepítsd a főképernyőre! <button onclick="installPWA()" style="background:#7C6FF7;color:white;border:none;padding:5px 13px;border-radius:16px;font-size:12px;font-weight:600;cursor:pointer">Igen!</button><button onclick="document.getElementById(\'install-banner\').remove()" style="background:none;border:none;color:#5A5878;cursor:pointer;font-size:16px;padding:0 4px">×</button>';
+    document.body.appendChild(b);
+    setTimeout(() => { const el = document.getElementById('install-banner'); if(el) el.remove(); }, 15000);
+  }, 3000);
+});
+
+window.installPWA = async () => {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    const el = document.getElementById('install-banner');
+    if(el) el.remove();
+  }
+};
+</script>
+</body>
+</html>
