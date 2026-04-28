@@ -932,6 +932,103 @@ body::before {
 }
 .suggest-item:last-child { border-bottom: none; }
 .suggest-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* HÉTVÉGE MÓD */
+.weekend-banner {
+  background: linear-gradient(135deg, rgba(46,204,142,.12), rgba(255,209,102,.08));
+  border: 1.5px solid rgba(46,204,142,.3);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+  display: none;
+}
+.weekend-banner.show { display: block; }
+.weekend-title {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.weekend-sub { font-size: 12px; color: var(--text3); margin-bottom: 12px; }
+.homework-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 13px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.homework-card:hover { border-color: var(--green); }
+.homework-card.done { opacity: .4; }
+.hw-icon { font-size: 18px; flex-shrink: 0; }
+.hw-body { flex: 1; }
+.hw-name { font-size: 13px; font-weight: 500; color: var(--text); }
+.hw-type { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.hw-check { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--border2); display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; transition: all .2s; }
+.homework-card.done .hw-check { background: var(--green); border-color: var(--green); color: white; }
+
+/* TANULÁS EMLÉKEZTETŐ */
+.study-reminder {
+  background: linear-gradient(135deg, rgba(124,111,247,.1), rgba(79,195,247,.06));
+  border: 1.5px solid rgba(124,111,247,.35);
+  border-radius: 12px;
+  padding: 13px 16px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+.study-reminder-icon { font-size: 24px; flex-shrink: 0; }
+.study-reminder-body { flex: 1; }
+.study-reminder-title { font-size: 13px; font-weight: 600; color: var(--accent2); }
+.study-reminder-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* DOLGOZAT KÖVETŐ */
+.exam-followup {
+  background: rgba(255,140,66,.08);
+  border: 1.5px solid rgba(255,140,66,.3);
+  border-radius: 12px;
+  padding: 13px 16px;
+  margin-bottom: 10px;
+}
+.exam-followup-title { font-size: 12px; font-weight: 600; color: var(--orange); margin-bottom: 8px; }
+.grade-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.grade-btn { padding: 5px 12px; border-radius: 16px; border: 1px solid var(--border2); background: var(--bg3); color: var(--text2); font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s; }
+.grade-btn:hover { border-color: var(--accent); color: var(--accent2); }
+.grade-btn.sel { background: var(--accent); border-color: var(--accent); color: white; }
+
+/* HATÉKONYSÁGI GRAFIKON */
+.efficiency-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 60px;
+  padding: 8px 0;
+}
+.eff-bar {
+  flex: 1;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+  opacity: .7;
+  transition: height .4s, opacity .2s;
+  min-height: 4px;
+  cursor: pointer;
+  position: relative;
+}
+.eff-bar:hover { opacity: 1; }
+.eff-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 4px;
+}
 </style>
 </head>
 <body>
@@ -965,6 +1062,22 @@ body::before {
     <div class="prog-track"><div class="prog-fill" id="nap-prog-fill" style="width:0%"></div></div>
   </div>
 
+  <!-- HÉTVÉGE BANNER -->
+  <div id="weekend-banner" class="weekend-banner">
+    <div class="weekend-title" id="weekend-title">🌅 Szombat — pihenő nap!</div>
+    <div class="weekend-sub">Ma nem kell mindent. Egy kis pihenés, egy kis segítség — aztán élvezd a szabadidőt.</div>
+    <div class="section-label" style="margin-top:0">💆 Hétvégi tippek</div>
+    <div id="weekend-tips-list"></div>
+    <div class="section-label">🏠 Segítség otthon</div>
+    <div id="homework-list"></div>
+  </div>
+
+  <!-- DOLGOZAT VISSZAKÉRDEZÉS -->
+  <div id="exam-followup-area"></div>
+
+  <!-- TANULÁS EMLÉKEZTETŐ -->
+  <div id="study-reminder-area"></div>
+
   <!-- HETI ELŐREJELZÉS banner (csak hétfőn látszik) -->
   <div id="weekly-forecast-banner" style="display:none;margin-bottom:14px;">
     <div class="card card-accent">
@@ -989,9 +1102,11 @@ body::before {
   <div class="time-grid" id="grid-reggel"></div>
   <button class="add-block-btn" onclick="openAddBlock('reggel')">＋ Időblokk hozzáadása</button>
 
+  <div id="iskola-section">
   <div class="section-label">🏫 Iskola / Tanulás</div>
   <div class="time-grid" id="grid-iskola"></div>
   <button class="add-block-btn" onclick="openAddBlock('iskola')">＋ Időblokk hozzáadása</button>
+  </div>
 
   <div class="section-label">🎮 Délután</div>
   <div class="time-grid" id="grid-delutan"></div>
@@ -1001,13 +1116,17 @@ body::before {
   <div class="time-grid" id="grid-este"></div>
   <button class="add-block-btn" onclick="openAddBlock('este')">＋ Időblokk hozzáadása</button>
 
+  <div id="indulas-section">
   <div class="section-label">✅ Indulás előtt</div>
   <div class="check-list" id="list-indulas"></div>
   <button class="add-check-btn" onclick="openAddCheck('indulas')">＋ Elem hozzáadása</button>
+  </div>
 
+  <div id="hazaer-section">
   <div class="section-label">🎒 Iskola után</div>
   <div class="check-list" id="list-hazaer"></div>
   <button class="add-check-btn" onclick="openAddCheck('hazaer')">＋ Elem hozzáadása</button>
+  </div>
 </div>
 
 <!-- ===================== ÓRAREND ===================== -->
@@ -1602,6 +1721,14 @@ body::before {
 
   <div class="section-label">🏆 Jelvények</div>
   <div class="two-col" id="badges-grid"></div>
+
+  <div class="section-label">📈 Tanulási hatékonyság</div>
+  <div class="card">
+    <div class="card-title">Dolgozat eredmények — idővel</div>
+    <div id="efficiency-chart-wrap">
+      <div style="font-size:12px;color:var(--text3);text-align:center;padding:16px;">Még nincs adat — töltsd ki a dolgozat eredményeket!</div>
+    </div>
+  </div>
 
   <div class="section-label">📊 XP szerzési módok</div>
   <div class="card">
@@ -3084,6 +3211,417 @@ function toggleMethod(id) {
 
 
 
+
+// ============================================================
+// HÉTVÉGE / HÉTKÖZNAP LOGIKA
+// ============================================================
+const WEEKEND_TIPS = [
+  "😴 Aludj annyit amennyit szeretnél — az agy ilyenkor rendezi a heti anyagot.",
+  "🚶 Menj ki egy kicsit a levegőre — 20 perc séta feltölti az energiát.",
+  "🎮 A játék is fontos — ez nem lustálkodás, ez az agy pihenése.",
+  "📚 Ha tanulni szeretnél, max 1 témát — és csak ha kedved van hozzá.",
+  "🎵 Hallgass zenét, nézz filmet, olvass — amit szeretsz.",
+  "🍕 Egyél valami finomságot — megérdemled a heti munkát!",
+  "☀️ Töltsd a napot olyanokkal, akik feltöltenek.",
+];
+
+const HOMEWORK_ROTATION = {
+  // Minden hétvégén fix
+  always: [
+    { name: "Saját szoba rendbe rakása", icon: "🛏", type: "Minden hétvégén" },
+    { name: "Reggeli után mosogatás segítség", icon: "🍽", type: "Minden hétvégén" },
+  ],
+  // Felváltva — hét száma alapján rotál
+  rotating: [
+    { name: "Íróasztal rendbe rakása", icon: "📝", type: "Havi 1x" },
+    { name: "Füzetek, írószerek ellenőrzése — kell-e valami?", icon: "✏️", type: "Havi 1x" },
+    { name: "Könyvespolc rendbe rakása", icon: "📚", type: "Havi 1x" },
+    { name: "Táska kitakarítása", icon: "🎒", type: "Havi 1x" },
+    { name: "Ruhatár ellenőrzése — mi lett kicsi?", icon: "👕", type: "Szezonális" },
+    { name: "Ablakpárkány letörlése", icon: "🪟", type: "Havi 1x" },
+  ]
+};
+
+// Hétköznapi mini-segítség
+const WEEKDAY_CHORES = [
+  { name: "Terítés vacsorához", icon: "🍽" },
+  { name: "Cipők rendbe rakása az előszobában", icon: "👟" },
+  { name: "Saját holmik helyére rakása", icon: "🧹" },
+  { name: "Szemetes kiürítése a szobában", icon: "🗑" },
+  { name: "Mosott ruhák összehajtása", icon: "👕" },
+];
+
+function isWeekend() {
+  const d = new Date().getDay();
+  return d === 0 || d === 6; // 0=vasárnap, 6=szombat
+}
+
+function getWeekNumber() {
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() + 3 - (d.getDay() + 6) % 7);
+  const week1 = new Date(d.getFullYear(), 0, 4);
+  return 1 + Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
+}
+
+function renderWeekendMode() {
+  const banner = document.getElementById('weekend-banner');
+  const title = document.getElementById('weekend-title');
+  if(!banner) return;
+
+  // Iskola szekciók elrejtése/megjelenítése
+  const iskolaSection = document.getElementById('iskola-section');
+  const indulasList = document.getElementById('indulas-section');
+  const hazaerList = document.getElementById('hazaer-section');
+  if(iskolaSection) iskolaSection.style.display = isWeekend() ? 'none' : 'block';
+  if(indulasList) indulasList.style.display = isWeekend() ? 'none' : 'block';
+  if(hazaerList) hazaerList.style.display = isWeekend() ? 'none' : 'block';
+
+  if(!isWeekend()) {
+    banner.classList.remove('show');
+    renderWeekdayChore();
+    return;
+  }
+
+  banner.classList.add('show');
+  const isSunday = new Date().getDay() === 0;
+  if(title) title.textContent = isSunday ? '☀️ Vasárnap — a hét utolsó pihenőnapja!' : '🌅 Szombat — pihenő nap!';
+
+  // Hétvégi tippek
+  const tipsList = document.getElementById('weekend-tips-list');
+  if(tipsList) {
+    tipsList.innerHTML = '';
+    // 2 random tipp
+    const shuffled = [...WEEKEND_TIPS].sort(()=>Math.random()-.5).slice(0,2);
+    shuffled.forEach(tip => {
+      const d = document.createElement('div');
+      d.style.cssText = 'padding:9px 12px;background:var(--bg3);border-radius:9px;font-size:12px;color:var(--text2);margin-bottom:6px;line-height:1.6;';
+      d.textContent = tip;
+      tipsList.appendChild(d);
+    });
+  }
+
+  // Házimunka lista
+  const hwList = document.getElementById('homework-list');
+  if(hwList) {
+    hwList.innerHTML = '';
+    const weekNum = getWeekNumber();
+    const rotIdx = weekNum % HOMEWORK_ROTATION.rotating.length;
+    const tasks = [...HOMEWORK_ROTATION.always, HOMEWORK_ROTATION.rotating[rotIdx]];
+
+    if(!state.weekendChores) state.weekendChores = {};
+    const weekKey = `w${weekNum}`;
+
+    tasks.forEach((task, i) => {
+      const key = weekKey + '_' + i;
+      const done = state.weekendChores[key] || false;
+      const card = document.createElement('div');
+      card.className = 'homework-card' + (done ? ' done' : '');
+      card.onclick = () => {
+        state.weekendChores[key] = !done;
+        if(!done) { addXP(5); showToast('🏠 +5 XP! Köszönet a segítségért!'); }
+        save(); renderWeekendMode();
+      };
+      card.innerHTML = `
+        <span class="hw-icon">${task.icon}</span>
+        <div class="hw-body">
+          <div class="hw-name">${task.name}</div>
+          <div class="hw-type">${task.type}</div>
+        </div>
+        <div class="hw-check">${done ? '✓' : ''}</div>`;
+      hwList.appendChild(card);
+    });
+  }
+}
+
+function renderWeekdayChore() {
+  // Hétköznapi mini-feladat — a nap sorszáma alapján
+  const dayIdx = new Date().getDay(); // 1-5 = H-P
+  const chore = WEEKDAY_CHORES[(dayIdx - 1) % WEEKDAY_CHORES.length];
+  const area = document.getElementById('study-reminder-area');
+  if(!area || !chore) return;
+
+  // Csak ha még nincs mai chore kész
+  const todayKey = 'chore_' + new Date().toDateString();
+  if(state[todayKey]) return;
+
+  const el = document.createElement('div');
+  el.className = 'homework-card';
+  el.style.marginBottom = '10px';
+  el.innerHTML = `
+    <span class="hw-icon">${chore.icon}</span>
+    <div class="hw-body">
+      <div class="hw-name">Mai mini-segítség: ${chore.name}</div>
+      <div class="hw-type">Csak 5 perc — nagy segítség a szülőknek!</div>
+    </div>
+    <div class="hw-check"></div>`;
+  el.onclick = () => {
+    state[todayKey] = true;
+    addXP(5); showToast('🏠 Köszönet! +5 XP');
+    save(); el.remove();
+  };
+  area.insertBefore(el, area.firstChild);
+}
+
+// ============================================================
+// TANULÁS EMLÉKEZTETŐ
+// ============================================================
+function renderStudyReminder() {
+  const area = document.getElementById('study-reminder-area');
+  if(!area || isWeekend()) return;
+
+  const todayIdx = getTodayDayIdx();
+  const subjects = getSubjectsForDay(todayIdx);
+  const exams = (state.exams||[]).filter(ex => {
+    const d = new Date(ex.date); d.setHours(0,0,0,0);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const diff = Math.round((d - today) / 86400000);
+    return diff >= 0 && diff <= 3; // 3 napon belüli dolgozat
+  });
+
+  // Sürgős dolgozat figyelmeztetés
+  exams.forEach(ex => {
+    const d = new Date(ex.date); d.setHours(0,0,0,0);
+    const today = new Date(); today.setHours(0,0,0,0);
+    const diff = Math.round((d - today) / 86400000);
+    const el = document.createElement('div');
+    el.className = 'study-reminder';
+    el.style.borderColor = diff <= 1 ? 'rgba(255,77,109,.5)' : 'rgba(255,140,66,.4)';
+    el.style.background = diff <= 1 ? 'rgba(255,77,109,.08)' : 'rgba(255,140,66,.06)';
+    el.innerHTML = `
+      <div class="study-reminder-icon">${diff === 0 ? '🚨' : diff === 1 ? '⚠️' : '📅'}</div>
+      <div class="study-reminder-body">
+        <div class="study-reminder-title">${diff === 0 ? 'MA DOLGOZAT!' : diff === 1 ? 'HOLNAP DOLGOZAT!' : diff + ' nap múlva dolgozat!'} — ${ex.subject}</div>
+        <div class="study-reminder-sub">${ex.name} · ${getSubjectStudyTip(ex.subject)}</div>
+      </div>`;
+    area.appendChild(el);
+  });
+
+  // Általános tanulás emlékeztető
+  if(subjects.length > 0) {
+    const now = new Date().getHours();
+    if(now >= 14 && now <= 20) {
+      const el = document.createElement('div');
+      el.className = 'study-reminder';
+      el.innerHTML = `
+        <div class="study-reminder-icon">📚</div>
+        <div class="study-reminder-body">
+          <div class="study-reminder-title">Tanulási idő! Holnap: ${subjects.slice(0,3).join(', ')}</div>
+          <div class="study-reminder-sub">Érdemes most átnézni — az este tanultak jobban megmaradnak alvás után.</div>
+        </div>`;
+      area.appendChild(el);
+    }
+  }
+}
+
+// ============================================================
+// TANTÁRGYSPECIFIKUS TANULÁSI TIPPEK
+// ============================================================
+const SUBJECT_TIPS = {
+  'matematika': { icon: '🔢', tip: 'Matekhoz: gyakorolj feladatokat — olvasás nem elég, meg kell csinálni!', method: 'practice' },
+  'matek': { icon: '🔢', tip: 'Matekhoz: gyakorolj feladatokat — olvasás nem elég, meg kell csinálni!', method: 'practice' },
+  'történelem': { icon: '📜', tip: 'Történelemhez: időrend + kulcsszavak cetlikre. Memóriapalota a dátumokhoz.', method: 'flashcard' },
+  'töri': { icon: '📜', tip: 'Törihez: cetlik + memóriapalota a dátumokhoz és eseményekhez.', method: 'flashcard' },
+  'biológia': { icon: '🌿', tip: 'Biológiához: rajzold le a folyamatokat — sketchnoting nagyon hatékony!', method: 'sketch' },
+  'bio': { icon: '🌿', tip: 'Biológiához: rajzold le a folyamatokat — sketchnoting hatékony!', method: 'sketch' },
+  'kémia': { icon: '⚗️', tip: 'Kémiához: a képleteket hangosan mondd el, írj akroníma-t az elemekhez.', method: 'memo' },
+  'fizika': { icon: '⚡', tip: 'Fizikához: képlet + egy megoldott feladat — érts meg egyet teljesen.', method: 'practice' },
+  'magyar': { icon: '📝', tip: 'Magyarhoz: olvasd hangosan az idézeteket — a fül segít megjegyezni.', method: 'audio' },
+  'irodalom': { icon: '📖', tip: 'Irodalomhoz: vázlat az eseményekről + szereplőkapcsolatok rajza.', method: 'mindmap' },
+  'angol': { icon: '🇬🇧', tip: 'Angolhoz: szavakat cetlikre, ragozásokat hangosan — ismétlés 1-3-7 nap.', method: 'flashcard' },
+  'német': { icon: '🇩🇪', tip: 'Némethez: cetlik + ragozási táblázat kézzel leírva.', method: 'flashcard' },
+  'földrajz': { icon: '🌍', tip: 'Földrajzhoz: térképen jelöld be — vizuális tanulás a leghatékonyabb.', method: 'sketch' },
+  'default': { icon: '📚', tip: 'Cornell-módszer: 3 zónás füzet — kulcsszavak bal oldalt, összefoglalás alul.', method: 'cornell' },
+};
+
+function getSubjectStudyTip(subject) {
+  const key = subject.toLowerCase();
+  for(const [k, v] of Object.entries(SUBJECT_TIPS)) {
+    if(key.includes(k)) return v.tip;
+  }
+  return SUBJECT_TIPS.default.tip;
+}
+
+function getSubjectIcon(subject) {
+  const key = subject.toLowerCase();
+  for(const [k, v] of Object.entries(SUBJECT_TIPS)) {
+    if(key.includes(k)) return v.icon;
+  }
+  return '📚';
+}
+
+// ============================================================
+// DOLGOZAT VISSZAKÉRDEZÉS (~1 héttel később)
+// ============================================================
+function renderExamFollowups() {
+  const area = document.getElementById('exam-followup-area');
+  if(!area) return;
+  area.innerHTML = '';
+
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  (state.exams||[]).forEach((ex, i) => {
+    if(ex.gradeAsked) return; // már megkérdeztük
+    const exDate = new Date(ex.date); exDate.setHours(0,0,0,0);
+    const daysSince = Math.round((today - exDate) / 86400000);
+
+    // 5-10 nappal a dolgozat után kérdezzük vissza
+    if(daysSince >= 5 && daysSince <= 14) {
+      const el = document.createElement('div');
+      el.className = 'exam-followup';
+      el.innerHTML = `
+        <div class="exam-followup-title">🎯 Hogy ment a ${ex.subject} dolgozat? (${ex.date})</div>
+        <div style="font-size:12px;color:var(--text2);">Add meg az eredményt — segít jobban felkészülni legközelebb!</div>
+        <div class="grade-btns">
+          ${['1','2','3','4','5'].map(g => `<button class="grade-btn" onclick="saveExamGrade(${i},'${g}',this)">${g}</button>`).join('')}
+          <button class="grade-btn" onclick="saveExamGrade(${i},'skip',this)" style="font-size:11px;">Kihagyom</button>
+        </div>`;
+      area.appendChild(el);
+    }
+  });
+}
+
+function saveExamGrade(idx, grade, btn) {
+  if(!state.exams[idx]) return;
+  state.exams[idx].grade = grade;
+  state.exams[idx].gradeAsked = true;
+
+  const subject = state.exams[idx].subject;
+
+  // Tároljuk a tanulási hatékonysághoz
+  if(!state.studyHistory) state.studyHistory = [];
+  state.studyHistory.push({
+    subject,
+    date: state.exams[idx].date,
+    grade: parseInt(grade) || 0,
+    method: state.lastStudyMethod?.[subject] || 'unknown',
+    studyMins: state.subjectStudyTime?.[subject] || 0,
+  });
+
+  save();
+  renderExamFollowups();
+  renderEfficiencyChart();
+
+  if(grade === 'skip') return;
+
+  const g = parseInt(grade);
+  let msg = '';
+  if(g >= 4) {
+    msg = `🎉 Szuper! ${g}-es! Ez a módszer bevált — legközelebb is így tanulj ${subject}-ból!`;
+    addXP(20); spawnConfetti();
+  } else if(g === 3) {
+    msg = `👍 Megvan a ${g}-as! Legközelebb próbálj meg kicsit többet gyakorolni — ${getSubjectStudyTip(subject)}`;
+    addXP(10);
+  } else {
+    msg = `💪 ${g}-es — ez nem az igazi, de tanulni lehet belőle! Próbáld ki: ${getSubjectStudyTip(subject)}`;
+    addXP(5);
+  }
+
+  showToast(msg.substring(0, 60) + '...');
+
+  // Pozitív megerősítés ha javult
+  if(state.studyHistory.length >= 2) {
+    const prev = state.studyHistory.filter(h => h.subject === subject);
+    if(prev.length >= 2 && g > prev[prev.length-2].grade) {
+      setTimeout(() => {
+        showToast(`📈 Javultál ${subject}-ból! Az előző ${prev[prev.length-2].grade} helyett most ${g}! 🔥`);
+        addXP(15); spawnConfetti();
+      }, 2000);
+    }
+  }
+}
+
+// ============================================================
+// TANULÁSI HATÉKONYSÁGI GRAFIKON
+// ============================================================
+function renderEfficiencyChart() {
+  const container = document.getElementById('efficiency-chart-wrap');
+  if(!container) return;
+
+  const history = state.studyHistory || [];
+  if(history.length === 0) {
+    container.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:16px;">Még nincs adat — töltsd ki a dolgozat eredményeket!</div>';
+    return;
+  }
+
+  // Utolsó 7 bejegyzés
+  const recent = history.slice(-7);
+  const maxGrade = 5;
+
+  let html = '<div class="efficiency-chart">';
+  recent.forEach(h => {
+    const pct = (h.grade / maxGrade * 100);
+    const color = h.grade >= 4 ? 'var(--green)' : h.grade === 3 ? 'var(--yellow)' : 'var(--red)';
+    html += `<div class="eff-bar" style="height:${pct}%;background:${color};" title="${h.subject}: ${h.grade}"></div>`;
+  });
+  html += '</div>';
+  html += '<div class="eff-label">';
+  html += `<span>${recent[0]?.subject?.substring(0,4) || ''}</span>`;
+  html += `<span>${recent[Math.floor(recent.length/2)]?.subject?.substring(0,4) || ''}</span>`;
+  html += `<span>${recent[recent.length-1]?.subject?.substring(0,4) || ''}</span>`;
+  html += '</div>';
+
+  // Szöveges összefoglaló
+  const avg = history.reduce((s,h) => s + (h.grade||0), 0) / history.length;
+  const best = history.reduce((b,h) => h.grade > (b?.grade||0) ? h : b, null);
+  html += `<div style="font-size:11px;color:var(--text3);margin-top:8px;line-height:1.7;">
+    📊 Átlag: <strong style="color:var(--text)">${avg.toFixed(1)}</strong> &nbsp;
+    🏆 Legjobb: <strong style="color:var(--green)">${best?.subject} (${best?.grade})</strong>
+  </div>`;
+
+  container.innerHTML = html;
+}
+
+// ============================================================
+// HÉTFŐI HÉT ELŐNÉZETE
+// ============================================================
+function renderMondayPreview() {
+  const banner = document.getElementById('weekly-forecast-banner');
+  const content = document.getElementById('weekly-forecast-content');
+  if(!banner || !content) return;
+
+  const jsDay = new Date().getDay();
+  const isMon = jsDay === 1;
+  if(!isMon && Object.keys(state.sched||{}).length === 0) return;
+
+  let html = isMon
+    ? '<div style="font-weight:700;color:var(--accent2);font-size:13px;margin-bottom:10px;">🗓 Ez vár rád ezen a héten:</div>'
+    : '';
+
+  for(let d = 0; d < 5; d++) {
+    const subjects = getSubjectsForDay(d);
+    const activities = getFixedActivitiesForDay(d);
+    const exams = (state.exams||[]).filter(ex => {
+      const exDate = new Date(ex.date); exDate.setHours(0,0,0,0);
+      const today = new Date(); today.setHours(0,0,0,0);
+      const targetDate = new Date(today);
+      const diff = (d - getTodayDayIdx() + 7) % 7;
+      targetDate.setDate(today.getDate() + diff);
+      return exDate.toDateString() === targetDate.toDateString();
+    });
+
+    if(subjects.length === 0 && activities.length === 0 && exams.length === 0) continue;
+
+    html += `<div style="margin-bottom:7px;padding:8px 10px;background:var(--bg3);border-radius:8px;">`;
+    html += `<div style="font-weight:600;color:var(--text);font-size:12px;margin-bottom:3px;">${DAY_NAMES[d]}</div>`;
+    if(subjects.length) {
+      html += `<div style="color:var(--text3);font-size:11px;">📚 ${subjects.map(s => getSubjectIcon(s) + ' ' + s).join(', ')}</div>`;
+    }
+    if(activities.length) {
+      html += `<div style="color:var(--orange);font-size:11px;">${activities.map(a => TYPE_ICONS[a.type] + ' ' + a.name + (a.time ? ' (' + a.time + ')' : '')).join(' · ')}</div>`;
+    }
+    if(exams.length) {
+      html += `<div style="color:var(--red);font-size:11px;font-weight:600;">⚠️ ${exams.map(e => e.subject + ' ' + e.name).join(', ')}</div>`;
+    }
+    html += '</div>';
+  }
+
+  if(html) {
+    content.innerHTML = html;
+    banner.style.display = 'block';
+  }
+}
+
 // ============================================================
 // FIX ELFOGLALTSÁGOK
 // ============================================================
@@ -3590,6 +4128,11 @@ function init() {
   renderFixedActivities();
   renderFlashcardList();
   generateTomorrowSuggest();
+  renderWeekendMode();
+  renderStudyReminder();
+  renderExamFollowups();
+  renderEfficiencyChart();
+  renderMondayPreview();
   // Heti előrejelzés csak hétfőn (vagy ha van adat)
   const todayJS = new Date().getDay();
   if(todayJS === 1 || Object.keys(state.sched||{}).length > 0) generateWeeklyForecast();
